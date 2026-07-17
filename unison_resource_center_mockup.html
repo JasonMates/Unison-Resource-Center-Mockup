@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Unison Resource Center Prototype</title>
+  <style>
+    :root{
+      --navy:#18324d;
+      --navy-2:#254965;
+      --teal:#2f7d79;
+      --teal-soft:#e7f1ef;
+      --cream:#f7f5f0;
+      --white:#ffffff;
+      --ink:#1e2b35;
+      --muted:#65727c;
+      --line:#dfe5e7;
+      --shadow:0 16px 40px rgba(24,50,77,.10);
+      --radius:18px;
+    }
+    *{box-sizing:border-box}
+    html{scroll-behavior:smooth}
+    body{
+      margin:0;
+      font-family:Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color:var(--ink);
+      background:#fbfcfc;
+      line-height:1.5;
+    }
+    a{color:inherit;text-decoration:none}
+    button,input,select{font:inherit}
+    .container{width:min(1180px,92vw);margin:0 auto}
+    .topbar{
+      background:var(--navy);
+      color:#dce7ef;
+      font-size:.86rem;
+      padding:.55rem 0;
+      letter-spacing:.02em;
+    }
+    .topbar-inner{display:flex;justify-content:space-between;gap:1rem;align-items:center}
+    .topbar a{color:#fff}
+    header{
+      position:sticky;top:0;z-index:40;
+      background:rgba(255,255,255,.94);
+      backdrop-filter:blur(12px);
+      border-bottom:1px solid rgba(223,229,231,.9);
+    }
+    .nav{
+      min-height:74px;display:flex;align-items:center;justify-content:space-between;gap:2rem
+    }
+    .brand{display:flex;align-items:center;gap:.8rem}
+    .mark{
+      width:42px;height:42px;border-radius:50%;
+      display:grid;place-items:center;
+      border:1.6px solid var(--navy);
+      color:var(--navy);
+      font-weight:800;
+      letter-spacing:-.08em;
+    }
+    .brand-copy strong{display:block;font-size:1rem;letter-spacing:.08em}
+    .brand-copy span{font-size:.73rem;color:var(--muted);letter-spacing:.1em}
+    .navlinks{display:flex;align-items:center;gap:1.35rem;font-size:.92rem}
+    .navlinks a:hover{color:var(--teal)}
+    .btn{
+      border:0;border-radius:999px;padding:.8rem 1.15rem;
+      cursor:pointer;font-weight:700;transition:.2s ease;
+    }
+    .btn-primary{background:var(--navy);color:#fff}
+    .btn-primary:hover{transform:translateY(-1px);background:var(--navy-2)}
+    .btn-ghost{background:#fff;border:1px solid var(--line);color:var(--navy)}
+    .btn-ghost:hover{border-color:var(--navy)}
+    .hero{
+      background:
+        radial-gradient(circle at 82% 20%, rgba(47,125,121,.22), transparent 25%),
+        linear-gradient(135deg,#eef4f5 0%,#faf8f3 58%,#ffffff 100%);
+      padding:72px 0 56px;
+      border-bottom:1px solid var(--line);
+    }
+    .hero-grid{display:grid;grid-template-columns:1.1fr .9fr;gap:54px;align-items:center}
+    .eyebrow{
+      color:var(--teal);font-size:.8rem;font-weight:800;letter-spacing:.14em;text-transform:uppercase
+    }
+    h1{font-family:Georgia,serif;font-size:clamp(2.45rem,5vw,4.8rem);line-height:1.02;margin:.8rem 0 1.1rem;color:var(--navy)}
+    .lead{font-size:1.12rem;color:#4b5d69;max-width:680px}
+    .search-shell{
+      margin-top:1.8rem;background:#fff;border:1px solid #d9e2e4;border-radius:16px;
+      padding:.55rem;display:grid;grid-template-columns:1fr auto;box-shadow:var(--shadow)
+    }
+    .search-shell input{border:0;outline:0;padding:.9rem 1rem;font-size:1rem;width:100%}
+    .quick-links{display:flex;flex-wrap:wrap;gap:.55rem;margin-top:1rem}
+    .chip{
+      border:1px solid #cdd9dc;background:rgba(255,255,255,.72);padding:.45rem .72rem;
+      border-radius:999px;font-size:.83rem;color:#40525d;cursor:pointer
+    }
+    .chip:hover{border-color:var(--teal);color:var(--teal)}
+    .hero-panel{
+      background:#fff;border:1px solid #dce5e7;border-radius:24px;padding:26px;
+      box-shadow:var(--shadow)
+    }
+    .panel-title{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}
+    .panel-title h3{margin:0;color:var(--navy)}
+    .status{font-size:.75rem;background:var(--teal-soft);color:var(--teal);padding:.32rem .6rem;border-radius:999px;font-weight:700}
+    .path-card{
+      border:1px solid var(--line);border-radius:14px;padding:15px;margin-top:10px;
+      display:flex;gap:13px;align-items:flex-start;cursor:pointer;transition:.2s ease
+    }
+    .path-card:hover{transform:translateX(3px);border-color:#b7cdcf}
+    .num{width:30px;height:30px;border-radius:10px;background:var(--navy);color:#fff;display:grid;place-items:center;font-weight:800;font-size:.82rem;flex:0 0 auto}
+    .path-card strong{display:block;color:var(--navy);font-size:.95rem}
+    .path-card span{font-size:.82rem;color:var(--muted)}
+    section{padding:70px 0}
+    .section-head{display:flex;justify-content:space-between;gap:2rem;align-items:end;margin-bottom:28px}
+    h2{font-family:Georgia,serif;color:var(--navy);font-size:clamp(2rem,3vw,3rem);margin:.3rem 0}
+    .section-head p{max-width:620px;color:var(--muted);margin:0}
+    .category-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+    .category{
+      background:#fff;border:1px solid var(--line);border-radius:var(--radius);padding:22px;
+      transition:.2s ease;min-height:235px;display:flex;flex-direction:column;justify-content:space-between
+    }
+    .category:hover{transform:translateY(-4px);box-shadow:var(--shadow);border-color:#c4d6d8}
+    .icon{
+      width:46px;height:46px;border-radius:14px;display:grid;place-items:center;
+      background:var(--teal-soft);color:var(--teal);font-weight:900;font-size:1.1rem
+    }
+    .category h3{color:var(--navy);margin:18px 0 8px;font-size:1.2rem}
+    .category p{color:var(--muted);font-size:.92rem;margin:0}
+    .category .count{margin-top:18px;font-size:.78rem;font-weight:700;color:var(--teal)}
+
+    .architecture{margin-top:26px;background:#f7faf9;border:1px solid #dbe7e5;border-radius:16px;padding:18px 20px;display:flex;justify-content:space-between;gap:20px;align-items:center}
+    .architecture strong{color:var(--navy)}
+    .architecture span{color:var(--muted);font-size:.9rem}
+    .flow{display:flex;align-items:center;gap:8px;flex-wrap:wrap;font-size:.8rem;font-weight:700;color:var(--navy)}
+    .flow b{background:#fff;border:1px solid var(--line);padding:.42rem .65rem;border-radius:999px}
+    .host{display:inline-flex;align-items:center;gap:.35rem;color:#4e646f;font-size:.76rem;margin-top:14px}
+    .host-dot{width:7px;height:7px;border-radius:50%;background:var(--teal)}
+    .url-box{border:1px solid var(--line);background:#f8fafb;border-radius:12px;padding:12px 14px;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.77rem;color:#4d5f69;overflow-wrap:anywhere}
+    .workspace{background:var(--cream);border-top:1px solid #ece9e0;border-bottom:1px solid #ece9e0}
+    .filterbar{
+      display:grid;grid-template-columns:1.5fr repeat(3, .8fr);gap:12px;margin-bottom:22px
+    }
+    .filterbar input,.filterbar select{
+      width:100%;border:1px solid #d9dfdf;background:#fff;border-radius:12px;padding:.82rem .9rem;outline:none
+    }
+    .resource-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+    .resource{
+      background:#fff;border:1px solid var(--line);border-radius:var(--radius);padding:22px;
+      display:flex;flex-direction:column;min-height:285px;transition:.2s ease;cursor:pointer
+    }
+    .resource:hover{transform:translateY(-3px);box-shadow:var(--shadow)}
+    .resource-top{display:flex;justify-content:space-between;gap:1rem;align-items:flex-start}
+    .tag{font-size:.72rem;letter-spacing:.06em;text-transform:uppercase;color:var(--teal);font-weight:800}
+    .type{font-size:.73rem;color:var(--muted);background:#f2f4f5;padding:.25rem .5rem;border-radius:999px}
+    .resource h3{margin:15px 0 8px;color:var(--navy);font-size:1.18rem}
+    .resource p{color:var(--muted);font-size:.91rem;margin:0}
+    .resource-foot{margin-top:auto;padding-top:20px;display:flex;justify-content:space-between;align-items:center;font-size:.8rem;color:#77848d}
+    .arrow{font-size:1.2rem;color:var(--navy)}
+    .no-results{
+      grid-column:1/-1;text-align:center;padding:50px 20px;color:var(--muted);background:#fff;border:1px dashed #cbd5d7;border-radius:16px
+    }
+    .feature-band{
+      background:var(--navy);color:#fff;border-radius:28px;padding:36px;
+      display:grid;grid-template-columns:1.2fr .8fr;gap:35px;align-items:center
+    }
+    .feature-band h2{color:#fff;margin:0 0 .8rem}
+    .feature-band p{color:#d6e1e8}
+    .feature-list{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+    .feature-item{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);padding:14px;border-radius:14px}
+    .feature-item strong{display:block}
+    .feature-item span{font-size:.82rem;color:#cbd8e0}
+    footer{background:#10273d;color:#d7e1e8;padding:42px 0 24px}
+    .footer-grid{display:grid;grid-template-columns:1.2fr repeat(3,.7fr);gap:30px}
+    footer h4{color:#fff;margin:0 0 12px}
+    footer a{display:block;color:#c7d2d8;font-size:.88rem;margin:.45rem 0}
+    .fineprint{border-top:1px solid rgba(255,255,255,.12);margin-top:30px;padding-top:20px;font-size:.78rem;color:#aebcc5}
+    .modal{
+      position:fixed;inset:0;background:rgba(10,25,38,.58);display:none;place-items:center;padding:20px;z-index:80
+    }
+    .modal.open{display:grid}
+    .modal-card{
+      width:min(680px,94vw);background:#fff;border-radius:22px;padding:28px;box-shadow:0 30px 80px rgba(0,0,0,.28)
+    }
+    .modal-head{display:flex;justify-content:space-between;align-items:flex-start;gap:1rem}
+    .close{border:0;background:#eef2f3;width:36px;height:36px;border-radius:50%;cursor:pointer;font-size:1.2rem}
+    .meta{display:flex;flex-wrap:wrap;gap:.5rem;margin:18px 0}
+    .meta span{background:#f2f5f5;border-radius:999px;padding:.38rem .62rem;font-size:.78rem;color:#53636d}
+    .modal-actions{display:flex;gap:10px;margin-top:24px;flex-wrap:wrap}
+    @media (max-width:1000px){
+      .category-grid{grid-template-columns:repeat(2,1fr)}
+      .resource-grid{grid-template-columns:repeat(2,1fr)}
+      .hero-grid,.feature-band{grid-template-columns:1fr}
+      .navlinks a:not(.keep){display:none}
+      .architecture{align-items:flex-start;flex-direction:column}
+    }
+    @media (max-width:700px){
+      .topbar{display:none}
+      .brand-copy span{display:none}
+      .navlinks{gap:.5rem}
+      .navlinks .btn{padding:.65rem .85rem}
+      .hero{padding:48px 0 40px}
+      .search-shell{grid-template-columns:1fr}
+      .search-shell .btn{width:100%}
+      .category-grid,.resource-grid,.footer-grid{grid-template-columns:1fr}
+      .filterbar{grid-template-columns:1fr}
+      .section-head{display:block}
+      .feature-list{grid-template-columns:1fr}
+      section{padding:52px 0}
+    }
+  </style>
+</head>
+<body>
+  <div class="topbar">
+    <div class="container topbar-inner">
+      <span></span>
+      <span>Website Mockup</span>
+    </div>
+  </div>
+
+  <header>
+    <div class="container nav">
+      <a href="#" class="brand">
+        <div class="mark">U</div>
+        <div class="brand-copy">
+          <strong>UNISON</strong>
+          <span>RESEARCH & EDUCATION</span>
+        </div>
+      </a>
+      <nav class="navlinks">
+        <a href="#start">Search</a>
+        <a href="#categories">Browse</a>
+        <a href="#resources">Resources</a>
+        <button class="btn btn-ghost" onclick="alert('Prototype only: this could connect to FrameAuth, Outseta, or another account provider.')">Sign In</button>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero">
+      <div class="container hero-grid">
+        <div>
+          <div class="eyebrow">Unison Resource Center</div>
+          <h1>Trusted guidance, organized around your work</h1>
+          <div class="search-shell">
+            <input id="heroSearch" type="search" placeholder="Search consent, exemptions, CME planning, research education..." />
+            <button class="btn btn-primary" onclick="runHeroSearch()">Search Resources</button>
+          </div>
+          <div class="quick-links">
+            <button class="chip" onclick="quickSearch('informed consent')">Informed consent</button>
+            <button class="chip" onclick="quickSearch('exemption')">Exemption guidance</button>
+            <button class="chip" onclick="quickSearch('research fundamentals')">Research fundamentals</button>
+            <button class="chip" onclick="quickSearch('CME')">CME planning</button>
+          </div>
+        </div>
+
+        <aside class="hero-panel" id="start">
+          <div class="panel-title">
+            <h3>Where should I start?</h3>
+            <span class="status">Guided pathways</span>
+          </div>
+          <div class="path-card" onclick="setCategory('IRB')">
+            <div class="num">01</div>
+            <div><strong>I need IRB or regulatory guidance</strong><span>Explore determinations, exemptions, consent, protocol, and study-startup resources.</span></div>
+          </div>
+          <div class="path-card" onclick="setCategory('CME')">
+            <div class="num">02</div>
+            <div><strong>I am developing a CME activity</strong><span>Find planning, learning-objective, evaluation, and educational-quality tools.</span></div>
+          </div>
+          <div class="path-card" onclick="setCategory('Education')">
+            <div class="num">03</div>
+            <div><strong>I want to learn or teach research</strong><span>Browse research fundamentals, templates, career development, and professional education.</span></div>
+          </div>
+        </aside>
+      </div>
+    </section>
+
+    <section id="categories">
+      <div class="container">
+        <div class="section-head">
+          <div>
+            <div class="eyebrow">Browse by section</div>
+            <h2>Department Resources</h2>
+          </div>
+
+        </div>
+
+        <div class="category-grid">
+          <a class="category" href="#resources" onclick="setCategory('IRB')">
+            <div>
+              <div class="icon">IRB</div>
+              <h3>IRB Resources</h3>
+              <p>Human-subjects determinations, exemptions, informed consent, study startup, regulatory references, protocol development, and investigator guidance.</p>
+            </div>
+            <div class="count">Browse IRB resources →</div>
+          </a>
+          <a class="category" href="#resources" onclick="setCategory('CME')">
+            <div>
+              <div class="icon">CME</div>
+              <h3>CME Resources</h3>
+              <p>Continuing Medical Education planning, program development, learning objectives, evaluation, educational quality, and activity-management tools.</p>
+            </div>
+            <div class="count">Browse CME resources →</div>
+          </a>
+          <a class="category" href="#resources" onclick="setCategory('Education')">
+            <div>
+              <div class="icon">EDU</div>
+              <h3>Education Resources</h3>
+              <p>Research fundamentals, student and early-career guidance, templates, professional development, and practical educational materials.</p>
+            </div>
+            <div class="count">Browse education resources →</div>
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <section class="workspace" id="resources">
+      <div class="container">
+        <div class="section-head">
+          <div>
+            <div class="eyebrow">Resource library</div>
+            <h2>Search across IRB, CME, and Education</h2>
+          </div>
+        </div>
+
+        <div class="filterbar">
+          <input id="searchInput" type="search" placeholder="Search titles, filenames, descriptions, and tags..." oninput="renderResources()" />
+          <select id="categoryFilter" onchange="renderResources()">
+            <option value="">All sections</option>
+            <option>IRB</option>
+            <option>CME</option>
+            <option>Education</option>
+          </select>
+          <select id="typeFilter" onchange="renderResources()">
+            <option value="">All formats</option>
+            <option>Article</option>
+            <option>Checklist</option>
+            <option>Template</option>
+            <option>Guide</option>
+            <option>Video</option>
+          </select>
+          <select id="audienceFilter" onchange="renderResources()">
+            <option value="">All audiences</option>
+            <option>New Investigator</option>
+            <option>Experienced Investigator</option>
+            <option>Research Administrator</option>
+            <option>Educator</option>
+            <option>Medical Learner</option>
+          </select>
+        </div>
+
+        <div class="resource-grid" id="resourceGrid"></div>
+      </div>
+    </section>
+
+    <section>
+      <div class="container">
+        <div class="feature-band">
+          <div>
+            <div class="eyebrow" style="color:#8fd2cd">Built for the Framer MVP</div>
+            <h2>Keep the interface simple and the files separate.</h2>
+            <p>Framer handles page design, search filters, metadata, and content presentation. Cloudflare R2 handles high-volume PDF storage and delivery without forcing Framer to store thousands of documents directly.</p>
+            <button class="btn btn-ghost" onclick="alert('Prototype only: this could open a Framer CMS form or contact workflow.')">Ask Unison a Question</button>
+          </div>
+          <div class="feature-list">
+            <div class="feature-item"><strong>Framer CMS</strong><span>Titles, descriptions, tags, dates, and URLs.</span></div>
+            <div class="feature-item"><strong>Cloudflare R2</strong><span>PDF storage and branded file delivery.</span></div>
+            <div class="feature-item"><strong>YouTube</strong><span>Video hosting and playback.</span></div>
+            <div class="feature-item"><strong>Metadata search</strong><span>Search titles, filenames, descriptions, and tags.</span></div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="container">
+      <div class="footer-grid">
+        <div>
+          <div class="brand" style="color:#fff">
+            <div class="mark" style="border-color:#fff;color:#fff">U</div>
+            <div class="brand-copy"><strong style="color:#fff">UNISON</strong><span style="color:#aebcc5">RESEARCH & EDUCATION</span></div>
+          </div>
+          <p style="max-width:380px;color:#b9c7cf;font-size:.9rem">Advancing ethical research, professional education, and healthcare quality through practical guidance and trusted expertise.</p>
+        </div>
+        <div><h4>Resources</h4><a href="#resources" onclick="setCategory('IRB')">IRB</a><a href="#resources" onclick="setCategory('CME')">CME</a><a href="#resources" onclick="setCategory('Education')">Education</a></div>
+        <div><h4>Explore</h4><a href="#start">Start here</a><a href="#categories">Browse all</a><a href="#">Contact</a></div>
+        <div><h4>System</h4><a href="#">Framer catalog</a><a href="#">Cloudflare PDFs</a><a href="#">YouTube videos</a></div>
+      </div>
+      <div class="fineprint">Prototype only. Educational content shown here is illustrative and does not constitute an IRB determination, legal advice, or regulatory approval.</div>
+    </div>
+  </footer>
+
+  <div class="modal" id="resourceModal" onclick="closeModal(event)">
+    <div class="modal-card">
+      <div class="modal-head">
+        <div>
+          <div class="tag" id="modalCategory"></div>
+          <h2 id="modalTitle" style="font-size:2rem;margin:.4rem 0"></h2>
+        </div>
+        <button class="close" onclick="forceClose()">×</button>
+      </div>
+      <p id="modalDescription" style="color:var(--muted)"></p>
+      <div class="meta" id="modalMeta"></div>
+      <p><strong>File delivery:</strong></p>
+      <div class="url-box" id="modalUrl"></div>
+      <div class="modal-actions">
+        <button id="openButton" class="btn btn-primary" onclick="showPrototypeLink()">View Resource</button>
+        <button class="btn btn-ghost" onclick="alert('Prototype bookmark action. This could require a user account.')">Save Resource</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const resources = [
+      {title:"Is My Project Human Subjects Research?",category:"IRB",type:"Guide",audience:"New Investigator",date:"Reviewed June 2026",desc:"A plain-language starting point for determining whether a project may involve human subjects research.",keywords:"human subjects determination classification project research",filename:"URE-IRB-Human-Subjects-Determination-Guide.pdf",host:"Cloudflare R2"},
+      {title:"IRB Study Startup Checklist",category:"IRB",type:"Checklist",audience:"Research Administrator",date:"Reviewed June 2026",desc:"A practical checklist covering core documents, team preparation, data planning, and submission readiness.",keywords:"study startup irb submission protocol",filename:"URE-IRB-Study-Startup-Checklist.pdf",host:"Cloudflare R2"},
+      {title:"Informed Consent Planning Guide",category:"IRB",type:"Guide",audience:"Experienced Investigator",date:"Reviewed May 2026",desc:"Key considerations for developing a clear, complete, and participant-centered consent process.",keywords:"informed consent participant form",filename:"URE-IRB-Informed-Consent-Planning-Guide.pdf",host:"Cloudflare R2"},
+      {title:"Exemption Categories at a Glance",category:"IRB",type:"Article",audience:"New Investigator",date:"Reviewed May 2026",desc:"An introductory overview of common exemption concepts and why institutional determination is still required.",keywords:"exemption exempt categories determination",filename:"URE-IRB-Exemption-Categories.pdf",host:"Cloudflare R2"},
+      {title:"Retrospective Records Review Planning Tool",category:"IRB",type:"Template",audience:"Experienced Investigator",date:"Reviewed April 2026",desc:"A planning worksheet for data sources, privacy, access, sharing, and multicenter considerations.",keywords:"retrospective chart review data use agreement privacy",filename:"URE-IRB-Retrospective-Review-Planning-Tool.pdf",host:"Cloudflare R2"},
+      {title:"Protocol Development Framework",category:"IRB",type:"Template",audience:"Experienced Investigator",date:"Reviewed April 2026",desc:"A structured outline to help investigators develop a coherent research protocol.",keywords:"protocol development template study design",filename:"URE-IRB-Protocol-Development-Framework.pdf",host:"Cloudflare R2"},
+      {title:"CME Activity Planning Checklist",category:"CME",type:"Checklist",audience:"Educator",date:"Reviewed June 2026",desc:"A practical checklist for goals, audience, content, outcomes, and educational quality.",keywords:"cme continuing medical education planning",filename:"URE-CME-Activity-Planning-Checklist.pdf",host:"Cloudflare R2"},
+      {title:"Writing Measurable Learning Objectives",category:"CME",type:"Article",audience:"Educator",date:"Reviewed May 2026",desc:"Examples and guidance for developing clear, assessable educational objectives.",keywords:"learning objectives education outcomes cme",filename:"URE-CME-Measurable-Learning-Objectives.pdf",host:"Cloudflare R2"},
+      {title:"CME Program Evaluation Template",category:"CME",type:"Template",audience:"Educator",date:"Reviewed May 2026",desc:"A simple template for evaluating learner experience, knowledge change, and future improvement.",keywords:"evaluation template educational quality cme",filename:"URE-CME-Program-Evaluation-Template.pdf",host:"Cloudflare R2"},
+      {title:"Planning High-Quality CME Activities",category:"CME",type:"Video",audience:"Educator",date:"Published June 2026",desc:"A short educational video covering the major planning decisions for a high-quality CME activity.",keywords:"cme planning educational activity video",filename:"youtube.com/watch?v=example-cme-01",host:"YouTube"},
+      {title:"CME Outcomes and Improvement Guide",category:"CME",type:"Guide",audience:"Educator",date:"Reviewed April 2026",desc:"Practical guidance for defining and evaluating meaningful educational outcomes.",keywords:"cme outcomes evaluation improvement",filename:"URE-CME-Outcomes-Improvement-Guide.pdf",host:"Cloudflare R2"},
+      {title:"Getting Started in Clinical Research",category:"Education",type:"Guide",audience:"New Investigator",date:"Reviewed June 2026",desc:"An introductory pathway covering research questions, mentors, ethics, protocols, and IRB basics.",keywords:"student early career first-time investigator clinical research fundamentals",filename:"URE-EDU-Getting-Started-Clinical-Research.pdf",host:"Cloudflare R2"},
+      {title:"Research Question Worksheet",category:"Education",type:"Template",audience:"Medical Learner",date:"Reviewed May 2026",desc:"A guided worksheet for narrowing a topic into a feasible and meaningful research question.",keywords:"research question worksheet student learner",filename:"URE-EDU-Research-Question-Worksheet.pdf",host:"Cloudflare R2"},
+      {title:"Common Research and Regulatory Terms",category:"Education",type:"Article",audience:"Medical Learner",date:"Reviewed May 2026",desc:"Plain-language definitions for frequently used research and IRB terminology.",keywords:"regulatory terms glossary research education",filename:"URE-EDU-Research-Regulatory-Terms.pdf",host:"Cloudflare R2"},
+      {title:"Research Fundamentals for Residents and Fellows",category:"Education",type:"Video",audience:"Medical Learner",date:"Published June 2026",desc:"An introductory video on study design, oversight, documentation, and responsible research conduct.",keywords:"research fundamentals residents fellows students video",filename:"youtube.com/watch?v=example-edu-01",host:"YouTube"},
+      {title:"Investigator Career Development Guide",category:"Education",type:"Guide",audience:"New Investigator",date:"Reviewed April 2026",desc:"Practical guidance for building research experience, identifying mentors, and developing a professional learning plan.",keywords:"career development investigator education mentor",filename:"URE-EDU-Investigator-Career-Development.pdf",host:"Cloudflare R2"},
+      {title:"Research Education Presentation Template",category:"Education",type:"Template",audience:"Educator",date:"Reviewed April 2026",desc:"A reusable presentation framework for teaching foundational research concepts.",keywords:"education presentation template training research",filename:"URE-EDU-Research-Presentation-Template.pdf",host:"Cloudflare R2"}
+    ];
+
+    let activeResource = null;
+
+    function renderResources(){
+      const q = document.getElementById('searchInput').value.toLowerCase().trim();
+      const c = document.getElementById('categoryFilter').value;
+      const t = document.getElementById('typeFilter').value;
+      const a = document.getElementById('audienceFilter').value;
+      const filtered = resources.filter(r => {
+        const hay = (r.title+" "+r.desc+" "+r.keywords+" "+r.category+" "+r.type+" "+r.audience+" "+r.filename).toLowerCase();
+        return (!q || hay.includes(q)) && (!c || r.category===c) && (!t || r.type===t) && (!a || r.audience===a);
+      });
+      const grid = document.getElementById('resourceGrid');
+      if(!filtered.length){
+        grid.innerHTML = '<div class="no-results">No resources match those filters. Try a broader search.</div>';
+        return;
+      }
+      grid.innerHTML = filtered.map(r => {
+        const index = resources.indexOf(r);
+        return `<article class="resource" onclick="openResource(${index})">
+          <div class="resource-top"><span class="tag">${r.category}</span><span class="type">${r.type}</span></div>
+          <h3>${r.title}</h3><p>${r.desc}</p>
+          <div class="host"><span class="host-dot"></span>${r.host === "YouTube" ? "Video hosted on YouTube" : "PDF hosted on Cloudflare R2"}</div>
+          <div class="resource-foot"><span>${r.date}</span><span class="arrow">→</span></div>
+        </article>`;
+      }).join('');
+    }
+
+    function setCategory(cat){
+      document.getElementById('categoryFilter').value = cat;
+      document.getElementById('searchInput').value = '';
+      renderResources();
+      document.getElementById('resources').scrollIntoView({behavior:'smooth'});
+    }
+    function quickSearch(term){
+      document.getElementById('searchInput').value = term;
+      document.getElementById('categoryFilter').value = '';
+      document.getElementById('typeFilter').value = '';
+      document.getElementById('audienceFilter').value = '';
+      renderResources();
+      document.getElementById('resources').scrollIntoView({behavior:'smooth'});
+    }
+    function runHeroSearch(){
+      document.getElementById('searchInput').value = document.getElementById('heroSearch').value;
+      renderResources();
+      document.getElementById('resources').scrollIntoView({behavior:'smooth'});
+    }
+    document.getElementById('heroSearch').addEventListener('keydown', e => { if(e.key==='Enter') runHeroSearch(); });
+
+    function openResource(index){
+      activeResource = resources[index];
+      document.getElementById('modalCategory').textContent = activeResource.category;
+      document.getElementById('modalTitle').textContent = activeResource.title;
+      document.getElementById('modalDescription').textContent = activeResource.desc;
+      document.getElementById('modalMeta').innerHTML = `<span>${activeResource.type}</span><span>${activeResource.audience}</span><span>${activeResource.date}</span>`;
+      const url = activeResource.host === "YouTube" ? `https://${activeResource.filename}` : `https://files.unison-re.org/${activeResource.category.toLowerCase()}/${activeResource.filename}`;
+      document.getElementById('modalUrl').textContent = url;
+      document.getElementById('openButton').textContent = activeResource.host === "YouTube" ? "Watch Video" : "View PDF";
+      document.getElementById('resourceModal').classList.add('open');
+      document.body.style.overflow='hidden';
+    }
+    function showPrototypeLink(){
+      if(!activeResource) return;
+      alert(activeResource.host === "YouTube" ? "Prototype only. In production, this button would open or embed the YouTube video." : "Prototype only. In production, this Framer CMS button would open the PDF stored in Cloudflare R2.");
+    }
+    function forceClose(){ document.getElementById('resourceModal').classList.remove('open'); document.body.style.overflow=''; }
+    function closeModal(e){ if(e.target.id==='resourceModal') forceClose(); }
+    document.addEventListener('keydown',e=>{if(e.key==='Escape') forceClose()});
+    renderResources();
+  </script>
+</body>
+</html>
