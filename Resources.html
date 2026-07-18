@@ -1,0 +1,665 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Unison Resource Center Prototype</title>
+  <style>
+    :root{
+      --navy:#18324d;
+      --navy-2:#254965;
+      --teal:#2f7d79;
+      --teal-soft:#e7f1ef;
+      --cream:#f7f5f0;
+      --white:#ffffff;
+      --ink:#1e2b35;
+      --muted:#65727c;
+      --line:#dfe5e7;
+      --shadow:0 16px 40px rgba(24,50,77,.10);
+      --radius:18px;
+    }
+    *{box-sizing:border-box}
+    html{scroll-behavior:smooth}
+    body{
+      margin:0;
+      font-family:Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color:var(--ink);
+      background:#fbfcfc;
+      line-height:1.5;
+    }
+    a{color:inherit;text-decoration:none}
+    button,input,select{font:inherit}
+    .container{width:min(1180px,92vw);margin:0 auto}
+    .topbar{
+      background:var(--navy);
+      color:#dce7ef;
+      font-size:.86rem;
+      padding:.55rem 0;
+      letter-spacing:.02em;
+    }
+    .topbar-inner{display:flex;justify-content:space-between;gap:1rem;align-items:center}
+    .topbar a{color:#fff}
+    header{
+      position:sticky;top:0;z-index:40;
+      background:rgba(255,255,255,.94);
+      backdrop-filter:blur(12px);
+      border-bottom:1px solid rgba(223,229,231,.9);
+    }
+    .nav{
+      min-height:74px;display:flex;align-items:center;justify-content:space-between;gap:2rem
+    }
+    .brand{display:flex;align-items:center;gap:.8rem}
+    .mark{
+      width:42px;height:42px;border-radius:50%;
+      display:grid;place-items:center;
+      border:1.6px solid var(--navy);
+      color:var(--navy);
+      font-weight:800;
+      letter-spacing:-.08em;
+    }
+    .brand-copy strong{display:block;font-size:1rem;letter-spacing:.08em}
+    .brand-copy span{font-size:.73rem;color:var(--muted);letter-spacing:.1em}
+    .navlinks{display:flex;align-items:center;gap:1.35rem;font-size:.92rem}
+    .navlinks a:hover{color:var(--teal)}
+    .btn{
+      border:0;border-radius:999px;padding:.8rem 1.15rem;
+      cursor:pointer;font-weight:700;transition:.2s ease;
+    }
+    .btn-primary{background:var(--navy);color:#fff}
+    .btn-primary:hover{transform:translateY(-1px);background:var(--navy-2)}
+    .btn-ghost{background:#fff;border:1px solid var(--line);color:var(--navy)}
+    .btn-ghost:hover{border-color:var(--navy)}
+    .hero{
+      background:
+        radial-gradient(circle at 82% 20%, rgba(47,125,121,.22), transparent 25%),
+        linear-gradient(135deg,#eef4f5 0%,#faf8f3 58%,#ffffff 100%);
+      padding:72px 0 56px;
+      border-bottom:1px solid var(--line);
+    }
+    .hero-grid{display:grid;grid-template-columns:1.1fr .9fr;gap:54px;align-items:center}
+    .eyebrow{
+      color:var(--teal);font-size:.8rem;font-weight:800;letter-spacing:.14em;text-transform:uppercase
+    }
+    h1{font-family:Georgia,serif;font-size:clamp(2.45rem,5vw,4.8rem);line-height:1.02;margin:.8rem 0 1.1rem;color:var(--navy)}
+    .lead{font-size:1.12rem;color:#4b5d69;max-width:680px}
+    .search-shell{
+      margin-top:1.8rem;background:#fff;border:1px solid #d9e2e4;border-radius:16px;
+      padding:.55rem;display:grid;grid-template-columns:1fr auto;box-shadow:var(--shadow)
+    }
+    .search-shell input{border:0;outline:0;padding:.9rem 1rem;font-size:1rem;width:100%}
+    .quick-links{display:flex;flex-wrap:wrap;gap:.55rem;margin-top:1rem}
+    .chip{
+      border:1px solid #cdd9dc;background:rgba(255,255,255,.72);padding:.45rem .72rem;
+      border-radius:999px;font-size:.83rem;color:#40525d;cursor:pointer
+    }
+    .chip:hover{border-color:var(--teal);color:var(--teal)}
+    .hero-panel{
+      background:#fff;border:1px solid #dce5e7;border-radius:24px;padding:26px;
+      box-shadow:var(--shadow)
+    }
+    .panel-title{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}
+    .panel-title h3{margin:0;color:var(--navy)}
+    .status{font-size:.75rem;background:var(--teal-soft);color:var(--teal);padding:.32rem .6rem;border-radius:999px;font-weight:700}
+    .path-card{
+      border:1px solid var(--line);border-radius:14px;padding:15px;margin-top:10px;
+      display:flex;gap:13px;align-items:flex-start;cursor:pointer;transition:.2s ease
+    }
+    .path-card:hover{transform:translateX(3px);border-color:#b7cdcf}
+    .num{width:30px;height:30px;border-radius:10px;background:var(--navy);color:#fff;display:grid;place-items:center;font-weight:800;font-size:.82rem;flex:0 0 auto}
+    .path-card strong{display:block;color:var(--navy);font-size:.95rem}
+    .path-card span{font-size:.82rem;color:var(--muted)}
+    section{padding:70px 0}
+    .section-head{display:flex;justify-content:space-between;gap:2rem;align-items:end;margin-bottom:28px}
+    h2{font-family:Georgia,serif;color:var(--navy);font-size:clamp(2rem,3vw,3rem);margin:.3rem 0}
+    .section-head p{max-width:620px;color:var(--muted);margin:0}
+    .category-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+    .category{
+      background:#fff;border:1px solid var(--line);border-radius:var(--radius);padding:22px;
+      transition:.2s ease;min-height:235px;display:flex;flex-direction:column;justify-content:space-between
+    }
+    .category:hover{transform:translateY(-4px);box-shadow:var(--shadow);border-color:#c4d6d8}
+    .icon{
+      width:46px;height:46px;border-radius:14px;display:grid;place-items:center;
+      background:var(--teal-soft);color:var(--teal);font-weight:900;font-size:1.1rem
+    }
+    .category h3{color:var(--navy);margin:18px 0 8px;font-size:1.2rem}
+    .category p{color:var(--muted);font-size:.92rem;margin:0}
+    .category .count{margin-top:18px;font-size:.78rem;font-weight:700;color:var(--teal)}
+
+    .architecture{margin-top:26px;background:#f7faf9;border:1px solid #dbe7e5;border-radius:16px;padding:18px 20px;display:flex;justify-content:space-between;gap:20px;align-items:center}
+    .architecture strong{color:var(--navy)}
+    .architecture span{color:var(--muted);font-size:.9rem}
+    .flow{display:flex;align-items:center;gap:8px;flex-wrap:wrap;font-size:.8rem;font-weight:700;color:var(--navy)}
+    .flow b{background:#fff;border:1px solid var(--line);padding:.42rem .65rem;border-radius:999px}
+    .host{display:inline-flex;align-items:center;gap:.35rem;color:#4e646f;font-size:.76rem;margin-top:14px}
+    .host-dot{width:7px;height:7px;border-radius:50%;background:var(--teal)}
+    .url-box{border:1px solid var(--line);background:#f8fafb;border-radius:12px;padding:12px 14px;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.77rem;color:#4d5f69;overflow-wrap:anywhere}
+    .workspace{background:var(--cream);border-top:1px solid #ece9e0;border-bottom:1px solid #ece9e0}
+    .filterbar{
+      display:grid;grid-template-columns:1.5fr repeat(3, .8fr);gap:12px;margin-bottom:22px
+    }
+    .filterbar input,.filterbar select{
+      width:100%;border:1px solid #d9dfdf;background:#fff;border-radius:12px;padding:.82rem .9rem;outline:none
+    }
+    .resource-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+    .resource{
+      background:#fff;border:1px solid var(--line);border-radius:var(--radius);padding:22px;
+      display:flex;flex-direction:column;min-height:285px;transition:.2s ease;cursor:pointer
+    }
+    .resource:hover{transform:translateY(-3px);box-shadow:var(--shadow)}
+    .resource-top{display:flex;justify-content:space-between;gap:1rem;align-items:flex-start}
+    .tag{font-size:.72rem;letter-spacing:.06em;text-transform:uppercase;color:var(--teal);font-weight:800}
+    .type{font-size:.73rem;color:var(--muted);background:#f2f4f5;padding:.25rem .5rem;border-radius:999px}
+    .resource h3{margin:15px 0 8px;color:var(--navy);font-size:1.18rem}
+    .resource p{color:var(--muted);font-size:.91rem;margin:0}
+    .resource-foot{margin-top:auto;padding-top:20px;display:flex;justify-content:space-between;align-items:center;font-size:.8rem;color:#77848d}
+    .arrow{font-size:1.2rem;color:var(--navy)}
+    .no-results{
+      grid-column:1/-1;text-align:center;padding:50px 20px;color:var(--muted);background:#fff;border:1px dashed #cbd5d7;border-radius:16px
+    }
+    .feature-band{
+      background:var(--navy);color:#fff;border-radius:28px;padding:36px;
+      display:grid;grid-template-columns:1.2fr .8fr;gap:35px;align-items:center
+    }
+    .feature-band h2{color:#fff;margin:0 0 .8rem}
+    .feature-band p{color:#d6e1e8}
+    .feature-list{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+    .feature-item{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);padding:14px;border-radius:14px}
+    .feature-item strong{display:block}
+    .feature-item span{font-size:.82rem;color:#cbd8e0}
+    footer{background:#10273d;color:#d7e1e8;padding:42px 0 24px}
+    .footer-grid{display:grid;grid-template-columns:1.2fr repeat(3,.7fr);gap:30px}
+    footer h4{color:#fff;margin:0 0 12px}
+    footer a{display:block;color:#c7d2d8;font-size:.88rem;margin:.45rem 0}
+    .fineprint{border-top:1px solid rgba(255,255,255,.12);margin-top:30px;padding-top:20px;font-size:.78rem;color:#aebcc5}
+    .modal{
+      position:fixed;inset:0;background:rgba(10,25,38,.58);display:none;place-items:center;padding:20px;z-index:80
+    }
+    .modal.open{display:grid}
+    .modal-card{
+      width:min(680px,94vw);background:#fff;border-radius:22px;padding:28px;box-shadow:0 30px 80px rgba(0,0,0,.28)
+    }
+    .modal-head{display:flex;justify-content:space-between;align-items:flex-start;gap:1rem}
+    .close{border:0;background:#eef2f3;width:36px;height:36px;border-radius:50%;cursor:pointer;font-size:1.2rem}
+    .meta{display:flex;flex-wrap:wrap;gap:.5rem;margin:18px 0}
+    .meta span{background:#f2f5f5;border-radius:999px;padding:.38rem .62rem;font-size:.78rem;color:#53636d}
+    .modal-actions{display:flex;gap:10px;margin-top:24px;flex-wrap:wrap}
+    @media (max-width:1000px){
+      .category-grid{grid-template-columns:repeat(2,1fr)}
+      .resource-grid{grid-template-columns:repeat(2,1fr)}
+      .hero-grid,.feature-band{grid-template-columns:1fr}
+      .navlinks a:not(.keep){display:none}
+      .architecture{align-items:flex-start;flex-direction:column}
+    }
+    @media (max-width:700px){
+      .topbar{display:none}
+      .brand-copy span{display:none}
+      .navlinks{gap:.5rem}
+      .navlinks .btn{padding:.65rem .85rem}
+      .hero{padding:48px 0 40px}
+      .search-shell{grid-template-columns:1fr}
+      .search-shell .btn{width:100%}
+      .category-grid,.resource-grid,.footer-grid{grid-template-columns:1fr}
+      .filterbar{grid-template-columns:1fr}
+      .section-head{display:block}
+      .feature-list{grid-template-columns:1fr}
+      section{padding:52px 0}
+    }
+
+    /* Shared Unison / Fluent 2 visual system */
+    body{font-family:"Segoe UI",system-ui,-apple-system,BlinkMacSystemFont,sans-serif;background:#fbfcfc}
+    body.menu-open{overflow:hidden}
+    .container,.wrap{width:min(1180px,calc(100% - 48px));margin:0 auto}
+    .skip-link{position:fixed;z-index:1000;top:12px;left:12px;padding:12px 16px;border-radius:8px;background:#fff;color:#10273d;font-weight:700;transform:translateY(-150%);transition:transform .15s ease}
+    .skip-link:focus{transform:none}
+    :focus-visible{outline:3px solid #fff;outline-offset:3px;box-shadow:0 0 0 6px var(--teal)}
+
+    .site-header{position:sticky;z-index:50;top:0;width:100%;padding:11px 0;border-bottom:1px solid rgba(24,50,77,.12);background:rgba(251,252,252,.94);box-shadow:0 1px 2px rgba(0,0,0,.14),0 0 2px rgba(0,0,0,.12);backdrop-filter:blur(14px)}
+    .site-header .nav{min-height:0;display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:24px}
+    .site-header .brand{width:54px;height:54px;padding:5px;border-radius:14px;background:rgba(255,255,255,.9);display:block;justify-self:start}
+    .u-logo{width:44px;height:44px;display:grid;place-items:center;border:2px solid #10273d;border-radius:50%;color:#10273d;font-size:1.55rem;font-weight:750;line-height:1;letter-spacing:-.08em}
+    .nav-links{display:flex;align-items:center;justify-self:center;gap:20px;padding:0}
+    .nav-links>a,.nav-dropdown summary{min-height:28px;font-size:1rem;font-weight:600;white-space:nowrap}
+    .nav-links>a{display:flex;align-items:center}
+    .nav-links>a:hover{color:var(--teal)}
+    .nav-links>a[aria-current="page"]{border-bottom:2px solid var(--teal)}
+    .nav-dropdown{position:relative}
+    .nav-dropdown summary{display:flex;align-items:center;gap:6px;list-style:none;cursor:pointer}
+    .nav-dropdown summary::-webkit-details-marker{display:none}
+    .nav-dropdown summary::after{content:"\2304";position:relative;top:-2px;color:var(--teal);font-size:.78rem}
+    .nav-dropdown[open] summary,.nav-dropdown:hover summary{color:var(--teal)}
+    .dropdown-menu{position:absolute;top:calc(100% + 18px);left:-18px;width:max-content;min-width:210px;padding:15px 10px 10px;border:1px solid #768bad;border-radius:0 15px 15px 15px;display:grid;gap:3px;background:#fff;box-shadow:0 8px 16px rgba(0,0,0,.14),0 0 2px rgba(0,0,0,.12);opacity:0;visibility:hidden;transform:translateY(-7px);transition:opacity .2s cubic-bezier(0,0,0,1),transform .2s cubic-bezier(0,0,0,1),visibility .2s}
+    .dropdown-menu::before{content:"";position:absolute;left:-1px;top:-19px;width:106px;height:19px;border:1px solid #768bad;border-bottom:0;border-radius:11px 11px 0 0;background:#fff}
+    .nav-dropdown[open] .dropdown-menu,.nav-dropdown:hover .dropdown-menu{opacity:1;visibility:visible;transform:none}
+    .dropdown-menu a{position:relative;isolation:isolate;padding:10px 12px;border-radius:6px;color:#10273d;font-size:.93rem;font-weight:600}
+    .dropdown-menu a::before{content:"";position:absolute;z-index:-1;left:7px;right:7px;top:52%;height:1.05em;background:rgba(247,210,75,.62);clip-path:polygon(0 21%,7% 13%,18% 18%,31% 8%,47% 15%,61% 6%,77% 14%,91% 9%,100% 20%,98% 82%,84% 90%,68% 84%,51% 94%,34% 86%,18% 92%,2% 80%);opacity:0;transform:translateY(-43%) scaleX(0) rotate(-.7deg) skewX(-3deg);transform-origin:left center;pointer-events:none}
+    .dropdown-menu a:hover::before,.dropdown-menu a:focus-visible::before{animation:nav-highlighter-swipe .48s both}
+    @keyframes nav-highlighter-swipe{0%{opacity:0;transform:translate(-3%,-39%) scaleX(0) rotate(-1.2deg) skewX(-4deg)}16%{opacity:.72;transform:translate(-2%,-47%) scaleX(.14) rotate(-.9deg) skewX(-3deg)}49%{opacity:.62;transform:translate(0,-41%) scaleX(.54) rotate(.35deg) skewX(-1deg)}76%{opacity:.7;transform:translate(0,-46%) scaleX(.82) rotate(-.35deg) skewX(1deg)}100%{opacity:.66;transform:translate(0,-43%) scaleX(1) rotate(-.55deg)}}
+    .header-actions{display:flex;align-items:center;justify-self:end;gap:8px}
+    .button{min-height:44px;padding:0 20px;border:1px solid transparent;border-radius:6px;display:inline-flex;align-items:center;justify-content:center;gap:16px;background:var(--navy);color:#fff;font-size:.875rem;font-weight:600;box-shadow:0 1px 2px rgba(0,0,0,.14);transition:background .1s linear,box-shadow .1s linear}
+    .button::after{content:"\2197";font-size:1.05rem}
+    .button:hover{background:var(--navy-2);box-shadow:0 4px 8px rgba(0,0,0,.14)}
+    .button.dark{background:#10273d}
+    .header-sign-in{min-height:44px;padding:0 16px;font-size:.8rem}
+    .menu-toggle{display:none;width:44px;height:44px;border:1px solid #d1d1d1;border-radius:6px;background:#fff;color:#10273d;font-size:1.35rem}
+
+    .hero{padding:66px 0 70px;border-bottom:0;background:var(--navy);color:#fff}
+    .hero-grid{grid-template-columns:1.05fr .95fr;gap:68px;align-items:start}
+    .hero .eyebrow{color:#b8d9d5;font-size:.8rem;font-weight:600;letter-spacing:.08em;text-transform:none}
+    .hero h1{max-width:680px;margin:18px 0 18px;color:#fff;font-family:inherit;font-size:clamp(3.3rem,6.3vw,6rem);font-weight:700;letter-spacing:-.065em;line-height:.94}
+    .resource-tagline{max-width:620px;margin:0;color:#d7e1e8;font-size:clamp(1.35rem,2.6vw,2.15rem);font-weight:500;letter-spacing:-.025em;line-height:1.2}
+    .search-shell{margin-top:30px;padding:6px;border:1px solid rgba(255,255,255,.28);border-radius:12px;box-shadow:0 8px 16px rgba(0,0,0,.18)}
+    .search-shell input{border-radius:6px}
+    .btn{min-height:44px;border-radius:6px;padding:.72rem 1rem;font-weight:600;box-shadow:0 1px 2px rgba(0,0,0,.14)}
+    .btn-primary{background:#10273d}
+    .btn-primary:hover{transform:none;background:#254965;box-shadow:0 4px 8px rgba(0,0,0,.16)}
+    .quick-links{gap:8px}
+    .chip{border-color:rgba(255,255,255,.35);border-radius:6px;background:rgba(255,255,255,.08);color:#fff}
+    .chip:hover{border-color:#9fd1cc;color:#fff;background:rgba(255,255,255,.14)}
+    .hero-panel{position:relative;margin-top:49px;padding:28px;border:1px solid rgba(255,255,255,.18);border-radius:0 16px 16px 16px;box-shadow:0 8px 16px rgba(0,0,0,.2)}
+    .panel-title{position:absolute;top:-49px;left:-1px;width:64%;height:50px;padding:0 18px;border:1px solid rgba(255,255,255,.18);border-bottom:0;border-radius:10px 10px 0 0;background:#fff;display:flex;align-items:center;margin:0}
+    .panel-title h3{font-size:1.08rem}
+    .panel-title .status{display:none}
+    .path-card{border-color:#e0e0e0;border-radius:8px;box-shadow:0 1px 2px rgba(0,0,0,.08)}
+    .path-card:hover{transform:none;border-color:#9fb7b8;box-shadow:0 4px 8px rgba(0,0,0,.12)}
+    .num{border-radius:6px}
+
+    section{padding:76px 0}
+    .section-head{margin-bottom:34px}
+    h2{font-family:inherit;color:var(--navy);font-size:clamp(2.25rem,4.5vw,4rem);font-weight:600;letter-spacing:-.055em;line-height:1;margin:12px 0}
+    .eyebrow{color:var(--teal);font-size:.8rem;font-weight:600;letter-spacing:.08em;text-transform:none}
+    .category-grid{gap:28px}
+    .category{--folder-tilt:-.55deg;position:relative;margin-top:29px;min-height:0;padding:26px 20px 18px;border:1px solid #d4b66f;border-radius:0 16px 16px 16px;background:#f4dda5;box-shadow:0 13px 0 -7px #e7c984,0 8px 16px rgba(83,62,17,.12);transition:transform .25s ease,box-shadow .25s ease,border-color .2s ease}
+    .category::before{position:absolute;top:-29px;left:-1px;width:43%;height:30px;padding:0 14px;display:flex;align-items:center;border:1px solid #d4b66f;border-bottom:0;border-radius:10px 10px 0 0;background:#f4dda5;color:#5b451d;font-size:.72rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase}
+    .category:nth-child(1)::before{content:"IRB"}.category:nth-child(2)::before{content:"CME"}.category:nth-child(3)::before{content:"Education"}
+    .category:nth-child(2){--folder-tilt:.5deg}.category:nth-child(3){--folder-tilt:-.3deg}
+    .category:hover,.category:focus-visible{transform:translateY(-9px) rotate(-.4deg);border-color:#c5a452;box-shadow:0 19px 0 -8px #e7c984,0 35px 65px rgba(83,62,17,.18)}
+    .icon{display:none}
+    .category-note{position:relative;width:min(90%,290px);min-height:205px;margin:0 auto;padding:22px 22px 26px;overflow:hidden;border:1px solid rgba(139,105,35,.12);border-radius:2px 3px 5px 2px;background:#fffdf0;box-shadow:0 9px 16px rgba(83,62,17,.13),2px 3px 0 rgba(139,105,35,.06);transform:rotate(-.65deg);transition:transform .34s cubic-bezier(.22,.8,.24,1),box-shadow .34s ease}
+    .category-note::after{content:"";position:absolute;right:-1px;bottom:-1px;width:24px;height:24px;background:linear-gradient(135deg,rgba(225,211,158,.18) 0 49%,#eee3ba 50% 100%);clip-path:polygon(0 100%,100% 0,100% 100%);filter:drop-shadow(-2px -2px 2px rgba(83,62,17,.08))}
+    .category:nth-child(2) .category-note{transform:rotate(.5deg) translateY(2px)}
+    .category:nth-child(3) .category-note{transform:rotate(-.25deg) translateY(-1px)}
+    .category:hover .category-note,.category:focus-visible .category-note{transform:translateY(-4px) rotate(calc(var(--folder-tilt) * -.55));box-shadow:0 13px 20px rgba(83,62,17,.18),2px 3px 0 rgba(139,105,35,.06)}
+    .category h3{position:relative;z-index:0;isolation:isolate;width:fit-content;margin:0 0 10px;color:#10273d;font-size:1.35rem}
+    .category h3::before{content:"";position:absolute;z-index:-1;left:-3%;top:52%;width:108%;height:.76em;background:rgba(247,210,75,.68);clip-path:polygon(0 20%,8% 10%,21% 17%,35% 7%,51% 15%,67% 6%,82% 14%,94% 9%,100% 20%,98% 82%,84% 91%,69% 84%,52% 94%,35% 87%,18% 93%,2% 80%);opacity:0;transform:translate(-4%,-43%) scaleX(0) rotate(-1deg) skewX(-3deg);transform-origin:left center;pointer-events:none}
+    .category:hover h3::before,.category:focus-visible h3::before{animation:category-highlighter-swipe .58s .08s both}
+    @keyframes category-highlighter-swipe{0%{opacity:0;transform:translate(-4%,-39%) scaleX(0) rotate(-1.5deg) skewX(-4deg)}13%{opacity:.78;transform:translate(-3%,-47%) scaleX(.1) rotate(-1.1deg) skewX(-3deg)}43%{opacity:.7;transform:translate(-1%,-41%) scaleX(.48) rotate(.3deg) skewX(-1deg)}73%{opacity:.76;transform:translate(0,-46%) scaleX(.83) rotate(-.45deg) skewX(1deg)}100%{opacity:.72;transform:translate(0,-43%) scaleX(1) rotate(-.65deg) skewX(0)}}
+    .category p{color:#596a84}
+    .category .count{margin:16px 8px 0;color:#276a67}
+    .architecture{border-radius:12px}
+    .workspace{background:#eef3f5;border-color:#dfe5e7}
+    .filterbar input,.filterbar select{min-height:46px;border-color:#d1d1d1;border-bottom-color:#616161;border-radius:4px;padding:.75rem .8rem}
+    .filterbar input:focus,.filterbar select:focus{border-bottom:2px solid var(--teal)}
+    .resource{min-height:285px;border-color:#e0e0e0;border-radius:12px;box-shadow:0 1px 2px rgba(0,0,0,.12)}
+    .resource:hover{transform:none;box-shadow:0 4px 8px rgba(0,0,0,.14)}
+    .type,.meta span{border-radius:6px}
+    .feature-band{border-radius:16px;box-shadow:0 8px 16px rgba(0,0,0,.14)}
+    .feature-band h2{font-family:inherit}
+    .feature-item{border-radius:8px}
+    .modal-card{border-radius:16px}
+    .close{border-radius:6px}
+
+    footer{padding:42px 0 24px;background:#10273d;color:#d7e1e8}
+    .footer-grid{display:grid;grid-template-columns:1.35fr repeat(2,.7fr);gap:30px}
+    .footer-identity{display:flex;align-items:center;gap:12px;color:#fff}
+    .footer-identity .u-logo{border-color:#fff;color:#fff}
+    .footer-brand-copy strong{display:block;color:#fff;font-size:1rem;letter-spacing:.08em}
+    .footer-brand-copy span{display:block;color:#aebcc5;font-size:.72rem;letter-spacing:.1em}
+    .footer-copy{max-width:380px;margin-top:18px;color:#c7d2d8;font-size:.9rem}
+    footer h2{margin:0 0 12px;color:#fff;font-size:1rem;letter-spacing:0}
+    footer nav{display:grid;gap:8px}
+    footer nav a{display:block;margin:0;color:#c7d2d8;font-size:.85rem}
+    footer nav a:hover{color:#fff;text-decoration:underline}
+    .fineprint{margin-top:28px;padding-top:20px;border-top:1px solid rgba(255,255,255,.14);color:#9fb0ba;font-size:.75rem}
+
+    @media (max-width:1050px){
+      .site-header .nav{grid-template-columns:1fr auto}
+      .hero-grid{grid-template-columns:minmax(0,1fr)}
+      .hero-grid>*{min-width:0}
+      .menu-toggle{display:block;position:relative;z-index:3}
+      .nav-links{display:none;position:fixed;inset:0;padding:110px 28px 30px;flex-direction:column;align-items:stretch;justify-content:flex-start;background:rgba(251,252,252,.98);overflow-y:auto}
+      .nav-links.open{display:flex}
+      .nav-links>a,.nav-dropdown summary{padding:8px 0;font-size:1.14rem}
+      .nav-dropdown{width:100%}
+      .nav-dropdown summary{justify-content:space-between}
+      .dropdown-menu{position:static;width:100%;min-width:0;margin:4px 0 8px;padding:10px;display:none;opacity:1;visibility:visible;transform:none;box-shadow:none}
+      .nav-dropdown[open] .dropdown-menu{display:grid}
+      .dropdown-menu::before{display:none}
+    }
+    @media (max-width:760px){
+      .container,.wrap{width:min(100% - 30px,1180px)}
+      .hero{padding:46px 0 58px}
+      .hero h1{font-size:clamp(3rem,14vw,4.3rem)}
+      .hero-panel{margin-top:49px}
+      .category-grid,.resource-grid,.footer-grid{grid-template-columns:1fr}
+      .footer-grid{gap:34px}
+    }
+    @media (forced-colors:active){.dropdown-menu a::before{display:none}}
+    @media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}*,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}.dropdown-menu a:hover::before,.dropdown-menu a:focus-visible::before{animation:none;opacity:.66;transform:translateY(-43%) scaleX(1)}.category:hover,.category:focus-visible{animation:none;transform:none}.category:hover h3::before,.category:focus-visible h3::before{animation:none;opacity:.72;transform:translateY(-43%) scaleX(1)}}
+  </style>
+</head>
+<body>
+  <a class="skip-link" href="#main-content">Skip to main content</a>
+  <header class="site-header">
+    <div class="wrap nav">
+      <a class="brand" href="Index.html" aria-label="Unison Research and Education home"><span class="u-logo" aria-hidden="true">U</span></a>
+      <nav class="nav-links" id="site-navigation" aria-label="Primary navigation">
+        <a href="Index.html">Home</a>
+        <a href="Contact.html">Contact</a>
+        <a href="Index.html#services">Services</a>
+        <details class="nav-dropdown"><summary>IRB</summary><div class="dropdown-menu"><a href="https://unison-re.org/about-us-1">About IRB</a><a href="https://unison-re.org/turnaround-times">Turnaround Times</a><a href="https://unison-re.org/contact-irb">Contact IRB</a></div></details>
+        <a href="https://unison-re.org/cme">CME</a>
+        <details class="nav-dropdown"><summary>Analytics</summary><div class="dropdown-menu"><a href="https://unison-re.org/about-us">About Analytics</a><a href="https://unison-re.org/contact-us">Contact Analytics</a></div></details>
+        <details class="nav-dropdown"><summary>Careers</summary><div class="dropdown-menu"><a href="https://unison-re.org/cme-committee-member">CME Committee Member</a><a href="https://unison-re.org/irb-member">IRB Member</a></div></details>
+        <a href="Resources.html" aria-current="page">Resources</a>
+      </nav>
+      <div class="header-actions"><a class="button dark header-sign-in" href="https://unison-re.org/m/account">Sign in</a><button class="menu-toggle" type="button" aria-expanded="false" aria-controls="site-navigation" aria-label="Open menu">&#9776;</button></div>
+    </div>
+  </header>
+
+  <main id="main-content" tabindex="-1">
+    <section class="hero" id="top">
+      <div class="container hero-grid">
+        <div>
+          <h1>Unison Resource Center</h1>
+          <p class="resource-tagline">Trusted guidance, organized around your work.</p>
+          <div class="search-shell">
+            <input id="heroSearch" type="search" aria-label="Search the resource center" placeholder="Search consent, exemptions, CME planning, research education..." />
+            <button class="btn btn-primary" type="button" onclick="runHeroSearch()">Search resources</button>
+          </div>
+          <div class="quick-links">
+            <button class="chip" onclick="quickSearch('informed consent')">Informed consent</button>
+            <button class="chip" onclick="quickSearch('exemption')">Exemption guidance</button>
+            <button class="chip" onclick="quickSearch('research fundamentals')">Research fundamentals</button>
+            <button class="chip" onclick="quickSearch('CME')">CME planning</button>
+          </div>
+        </div>
+
+        <aside class="hero-panel" id="start">
+          <div class="panel-title">
+            <h3>Where should I start?</h3>
+            <span class="status">Guided pathways</span>
+          </div>
+          <div class="path-card" onclick="setCategory('IRB')">
+            <div class="num">01</div>
+            <div><strong>I need IRB or regulatory guidance</strong><span>Explore determinations, exemptions, consent, protocol, and study-startup resources.</span></div>
+          </div>
+          <div class="path-card" onclick="setCategory('CME')">
+            <div class="num">02</div>
+            <div><strong>I am developing a CME activity</strong><span>Find planning, learning-objective, evaluation, and educational-quality tools.</span></div>
+          </div>
+          <div class="path-card" onclick="setCategory('Education')">
+            <div class="num">03</div>
+            <div><strong>I want to learn or teach research</strong><span>Browse research fundamentals, templates, career development, and professional education.</span></div>
+          </div>
+        </aside>
+      </div>
+    </section>
+
+    <section id="categories">
+      <div class="container">
+        <div class="section-head">
+          <div>
+            <div class="eyebrow">Browse by section</div>
+            <h2>Department Resources</h2>
+          </div>
+
+        </div>
+
+        <div class="category-grid">
+          <a class="category" href="#resources" onclick="setCategory('IRB')">
+            <div class="category-note">
+              <div class="icon">IRB</div>
+              <h3>IRB Resources</h3>
+              <p>Human-subjects determinations, exemptions, informed consent, study startup, regulatory references, protocol development, and investigator guidance.</p>
+            </div>
+            <div class="count">Browse IRB resources →</div>
+          </a>
+          <a class="category" href="#resources" onclick="setCategory('CME')">
+            <div class="category-note">
+              <div class="icon">CME</div>
+              <h3>CME Resources</h3>
+              <p>Continuing Medical Education planning, program development, learning objectives, evaluation, educational quality, and activity-management tools.</p>
+            </div>
+            <div class="count">Browse CME resources →</div>
+          </a>
+          <a class="category" href="#resources" onclick="setCategory('Education')">
+            <div class="category-note">
+              <div class="icon">EDU</div>
+              <h3>Education Resources</h3>
+              <p>Research fundamentals, student and early-career guidance, templates, professional development, and practical educational materials.</p>
+            </div>
+            <div class="count">Browse education resources →</div>
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <section class="workspace" id="resources">
+      <div class="container">
+        <div class="section-head">
+          <div>
+            <div class="eyebrow">Resource library</div>
+            <h2>Search across IRB, CME, and Education</h2>
+          </div>
+        </div>
+
+        <div class="filterbar">
+          <input id="searchInput" type="search" aria-label="Search resource titles, descriptions, and tags" placeholder="Search titles, descriptions, and tags..." oninput="renderResources()" />
+          <select id="categoryFilter" aria-label="Filter by section" onchange="renderResources()">
+            <option value="">All sections</option>
+            <option>IRB</option>
+            <option>CME</option>
+            <option>Education</option>
+          </select>
+          <select id="typeFilter" aria-label="Filter by format" onchange="renderResources()">
+            <option value="">All formats</option>
+            <option>Article</option>
+            <option>Checklist</option>
+            <option>Template</option>
+            <option>Guide</option>
+            <option>Video</option>
+          </select>
+          <select id="audienceFilter" aria-label="Filter by audience" onchange="renderResources()">
+            <option value="">All audiences</option>
+            <option>New Investigator</option>
+            <option>Experienced Investigator</option>
+            <option>Research Administrator</option>
+            <option>Educator</option>
+            <option>Medical Learner</option>
+          </select>
+        </div>
+
+        <div class="resource-grid" id="resourceGrid"></div>
+      </div>
+    </section>
+
+    <section>
+      <div class="container">
+        <div class="feature-band">
+          <div>
+            <div class="eyebrow" style="color:#8fd2cd">Need a hand?</div>
+            <h2>Not sure which resource fits your work?</h2>
+            <p>Unison can help you identify a practical starting point across research oversight, continuing medical education, and professional learning.</p>
+            <a class="btn btn-ghost" href="Contact.html">Ask Unison a question</a>
+          </div>
+          <div class="feature-list">
+            <div class="feature-item"><strong>Expert reviewed</strong><span>Guidance shaped by experienced professionals.</span></div>
+            <div class="feature-item"><strong>Plain language</strong><span>Complex subjects organized for practical use.</span></div>
+            <div class="feature-item"><strong>Multiple formats</strong><span>Guides, checklists, templates, and videos.</span></div>
+            <div class="feature-item"><strong>Focused search</strong><span>Filter by department, format, and audience.</span></div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="wrap">
+      <div class="footer-grid">
+        <div><a class="footer-identity" href="Index.html" aria-label="Unison Research and Education home"><span class="u-logo" aria-hidden="true">U</span><span class="footer-brand-copy"><strong>UNISON</strong><span>RESEARCH &amp; EDUCATION</span></span></a><p class="footer-copy">Advancing ethical research, professional education, and healthcare quality through practical guidance and trusted expertise.</p></div>
+        <div><h2>Resources</h2><nav aria-label="Footer resource links"><a href="#resources" onclick="setCategory('IRB')">IRB</a><a href="#resources" onclick="setCategory('CME')">CME</a><a href="#resources" onclick="setCategory('Education')">Education</a></nav></div>
+        <div><h2>Explore</h2><nav aria-label="Footer site links"><a href="#start">Start here</a><a href="#categories">Browse all</a><a href="Contact.html">Contact</a></nav></div>
+      </div>
+      <div class="fineprint">Prototype only. Educational content shown here is illustrative and does not constitute an IRB determination, legal advice, or regulatory approval.</div>
+    </div>
+  </footer>
+
+  <div class="modal" id="resourceModal" role="dialog" aria-modal="true" aria-labelledby="modalTitle" onclick="closeModal(event)">
+    <div class="modal-card">
+      <div class="modal-head">
+        <div>
+          <div class="tag" id="modalCategory"></div>
+          <h2 id="modalTitle" style="font-size:2rem;margin:.4rem 0"></h2>
+        </div>
+        <button class="close" type="button" aria-label="Close resource details" onclick="forceClose()">&times;</button>
+      </div>
+      <p id="modalDescription" style="color:var(--muted)"></p>
+      <div class="meta" id="modalMeta"></div>
+      <p><strong>File delivery:</strong></p>
+      <div class="url-box" id="modalUrl"></div>
+      <div class="modal-actions">
+        <button id="openButton" class="btn btn-primary" onclick="showPrototypeLink()">View Resource</button>
+        <button class="btn btn-ghost" onclick="alert('Prototype bookmark action. This could require a user account.')">Save Resource</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const resources = [
+      {title:"Is My Project Human Subjects Research?",category:"IRB",type:"Guide",audience:"New Investigator",date:"Reviewed June 2026",desc:"A plain-language starting point for determining whether a project may involve human subjects research.",keywords:"human subjects determination classification project research",filename:"URE-IRB-Human-Subjects-Determination-Guide.pdf",host:"Cloudflare R2"},
+      {title:"IRB Study Startup Checklist",category:"IRB",type:"Checklist",audience:"Research Administrator",date:"Reviewed June 2026",desc:"A practical checklist covering core documents, team preparation, data planning, and submission readiness.",keywords:"study startup irb submission protocol",filename:"URE-IRB-Study-Startup-Checklist.pdf",host:"Cloudflare R2"},
+      {title:"Informed Consent Planning Guide",category:"IRB",type:"Guide",audience:"Experienced Investigator",date:"Reviewed May 2026",desc:"Key considerations for developing a clear, complete, and participant-centered consent process.",keywords:"informed consent participant form",filename:"URE-IRB-Informed-Consent-Planning-Guide.pdf",host:"Cloudflare R2"},
+      {title:"Exemption Categories at a Glance",category:"IRB",type:"Article",audience:"New Investigator",date:"Reviewed May 2026",desc:"An introductory overview of common exemption concepts and why institutional determination is still required.",keywords:"exemption exempt categories determination",filename:"URE-IRB-Exemption-Categories.pdf",host:"Cloudflare R2"},
+      {title:"Retrospective Records Review Planning Tool",category:"IRB",type:"Template",audience:"Experienced Investigator",date:"Reviewed April 2026",desc:"A planning worksheet for data sources, privacy, access, sharing, and multicenter considerations.",keywords:"retrospective chart review data use agreement privacy",filename:"URE-IRB-Retrospective-Review-Planning-Tool.pdf",host:"Cloudflare R2"},
+      {title:"Protocol Development Framework",category:"IRB",type:"Template",audience:"Experienced Investigator",date:"Reviewed April 2026",desc:"A structured outline to help investigators develop a coherent research protocol.",keywords:"protocol development template study design",filename:"URE-IRB-Protocol-Development-Framework.pdf",host:"Cloudflare R2"},
+      {title:"CME Activity Planning Checklist",category:"CME",type:"Checklist",audience:"Educator",date:"Reviewed June 2026",desc:"A practical checklist for goals, audience, content, outcomes, and educational quality.",keywords:"cme continuing medical education planning",filename:"URE-CME-Activity-Planning-Checklist.pdf",host:"Cloudflare R2"},
+      {title:"Writing Measurable Learning Objectives",category:"CME",type:"Article",audience:"Educator",date:"Reviewed May 2026",desc:"Examples and guidance for developing clear, assessable educational objectives.",keywords:"learning objectives education outcomes cme",filename:"URE-CME-Measurable-Learning-Objectives.pdf",host:"Cloudflare R2"},
+      {title:"CME Program Evaluation Template",category:"CME",type:"Template",audience:"Educator",date:"Reviewed May 2026",desc:"A simple template for evaluating learner experience, knowledge change, and future improvement.",keywords:"evaluation template educational quality cme",filename:"URE-CME-Program-Evaluation-Template.pdf",host:"Cloudflare R2"},
+      {title:"Planning High-Quality CME Activities",category:"CME",type:"Video",audience:"Educator",date:"Published June 2026",desc:"A short educational video covering the major planning decisions for a high-quality CME activity.",keywords:"cme planning educational activity video",filename:"youtube.com/watch?v=example-cme-01",host:"YouTube"},
+      {title:"CME Outcomes and Improvement Guide",category:"CME",type:"Guide",audience:"Educator",date:"Reviewed April 2026",desc:"Practical guidance for defining and evaluating meaningful educational outcomes.",keywords:"cme outcomes evaluation improvement",filename:"URE-CME-Outcomes-Improvement-Guide.pdf",host:"Cloudflare R2"},
+      {title:"Getting Started in Clinical Research",category:"Education",type:"Guide",audience:"New Investigator",date:"Reviewed June 2026",desc:"An introductory pathway covering research questions, mentors, ethics, protocols, and IRB basics.",keywords:"student early career first-time investigator clinical research fundamentals",filename:"URE-EDU-Getting-Started-Clinical-Research.pdf",host:"Cloudflare R2"},
+      {title:"Research Question Worksheet",category:"Education",type:"Template",audience:"Medical Learner",date:"Reviewed May 2026",desc:"A guided worksheet for narrowing a topic into a feasible and meaningful research question.",keywords:"research question worksheet student learner",filename:"URE-EDU-Research-Question-Worksheet.pdf",host:"Cloudflare R2"},
+      {title:"Common Research and Regulatory Terms",category:"Education",type:"Article",audience:"Medical Learner",date:"Reviewed May 2026",desc:"Plain-language definitions for frequently used research and IRB terminology.",keywords:"regulatory terms glossary research education",filename:"URE-EDU-Research-Regulatory-Terms.pdf",host:"Cloudflare R2"},
+      {title:"Research Fundamentals for Residents and Fellows",category:"Education",type:"Video",audience:"Medical Learner",date:"Published June 2026",desc:"An introductory video on study design, oversight, documentation, and responsible research conduct.",keywords:"research fundamentals residents fellows students video",filename:"youtube.com/watch?v=example-edu-01",host:"YouTube"},
+      {title:"Investigator Career Development Guide",category:"Education",type:"Guide",audience:"New Investigator",date:"Reviewed April 2026",desc:"Practical guidance for building research experience, identifying mentors, and developing a professional learning plan.",keywords:"career development investigator education mentor",filename:"URE-EDU-Investigator-Career-Development.pdf",host:"Cloudflare R2"},
+      {title:"Research Education Presentation Template",category:"Education",type:"Template",audience:"Educator",date:"Reviewed April 2026",desc:"A reusable presentation framework for teaching foundational research concepts.",keywords:"education presentation template training research",filename:"URE-EDU-Research-Presentation-Template.pdf",host:"Cloudflare R2"}
+    ];
+
+    let activeResource = null;
+
+    function renderResources(){
+      const q = document.getElementById('searchInput').value.toLowerCase().trim();
+      const c = document.getElementById('categoryFilter').value;
+      const t = document.getElementById('typeFilter').value;
+      const a = document.getElementById('audienceFilter').value;
+      const filtered = resources.filter(r => {
+        const hay = (r.title+" "+r.desc+" "+r.keywords+" "+r.category+" "+r.type+" "+r.audience+" "+r.filename).toLowerCase();
+        return (!q || hay.includes(q)) && (!c || r.category===c) && (!t || r.type===t) && (!a || r.audience===a);
+      });
+      const grid = document.getElementById('resourceGrid');
+      if(!filtered.length){
+        grid.innerHTML = '<div class="no-results">No resources match those filters. Try a broader search.</div>';
+        return;
+      }
+      grid.innerHTML = filtered.map(r => {
+        const index = resources.indexOf(r);
+        return `<article class="resource" role="button" tabindex="0" onclick="openResource(${index})" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();openResource(${index})}">
+          <div class="resource-top"><span class="tag">${r.category}</span><span class="type">${r.type}</span></div>
+          <h3>${r.title}</h3><p>${r.desc}</p>
+          <div class="host"><span class="host-dot"></span>${r.host === "YouTube" ? "Video hosted on YouTube" : "PDF hosted on Cloudflare R2"}</div>
+          <div class="resource-foot"><span>${r.date}</span><span class="arrow">→</span></div>
+        </article>`;
+      }).join('');
+    }
+
+    function setCategory(cat){
+      document.getElementById('categoryFilter').value = cat;
+      document.getElementById('searchInput').value = '';
+      renderResources();
+      document.getElementById('resources').scrollIntoView({behavior:'smooth'});
+    }
+    function quickSearch(term){
+      document.getElementById('searchInput').value = term;
+      document.getElementById('categoryFilter').value = '';
+      document.getElementById('typeFilter').value = '';
+      document.getElementById('audienceFilter').value = '';
+      renderResources();
+      document.getElementById('resources').scrollIntoView({behavior:'smooth'});
+    }
+    function runHeroSearch(){
+      document.getElementById('searchInput').value = document.getElementById('heroSearch').value;
+      renderResources();
+      document.getElementById('resources').scrollIntoView({behavior:'smooth'});
+    }
+    document.getElementById('heroSearch').addEventListener('keydown', e => { if(e.key==='Enter') runHeroSearch(); });
+
+    function openResource(index){
+      activeResource = resources[index];
+      document.getElementById('modalCategory').textContent = activeResource.category;
+      document.getElementById('modalTitle').textContent = activeResource.title;
+      document.getElementById('modalDescription').textContent = activeResource.desc;
+      document.getElementById('modalMeta').innerHTML = `<span>${activeResource.type}</span><span>${activeResource.audience}</span><span>${activeResource.date}</span>`;
+      const url = activeResource.host === "YouTube" ? `https://${activeResource.filename}` : `https://files.unison-re.org/${activeResource.category.toLowerCase()}/${activeResource.filename}`;
+      document.getElementById('modalUrl').textContent = url;
+      document.getElementById('openButton').textContent = activeResource.host === "YouTube" ? "Watch Video" : "View PDF";
+      document.getElementById('resourceModal').classList.add('open');
+      document.body.style.overflow='hidden';
+    }
+    function showPrototypeLink(){
+      if(!activeResource) return;
+      alert(activeResource.host === "YouTube" ? "Prototype only. In production, this button would open or embed the YouTube video." : "Prototype only. In production, this Framer CMS button would open the PDF stored in Cloudflare R2.");
+    }
+    function forceClose(){ document.getElementById('resourceModal').classList.remove('open'); document.body.style.overflow=''; }
+    function closeModal(e){ if(e.target.id==='resourceModal') forceClose(); }
+    document.addEventListener('keydown',e=>{if(e.key==='Escape') forceClose()});
+    renderResources();
+  </script>
+  <script>
+    const menuButton = document.querySelector('.menu-toggle');
+    const navigation = document.querySelector('.nav-links');
+    const mainContent = document.querySelector('main');
+    const pageFooter = document.querySelector('footer');
+
+    function setMenuState(isOpen, returnFocus = false) {
+      navigation.classList.toggle('open', isOpen);
+      menuButton.setAttribute('aria-expanded', String(isOpen));
+      menuButton.setAttribute('aria-label', isOpen ? 'Close menu' : 'Open menu');
+      menuButton.innerHTML = isOpen ? '&#10005;' : '&#9776;';
+      document.body.classList.toggle('menu-open', isOpen);
+      mainContent.inert = isOpen;
+      pageFooter.inert = isOpen;
+      if (isOpen) requestAnimationFrame(() => navigation.querySelector('a, summary')?.focus());
+      else {
+        navigation.querySelectorAll('details[open]').forEach(item => item.removeAttribute('open'));
+        if (returnFocus) menuButton.focus();
+      }
+    }
+
+    menuButton.addEventListener('click', () => setMenuState(!navigation.classList.contains('open')));
+    navigation.querySelectorAll('a').forEach(link => link.addEventListener('click', () => setMenuState(false)));
+    const navDropdowns = [...navigation.querySelectorAll('.nav-dropdown')];
+    navDropdowns.forEach(dropdown => {
+      dropdown.querySelector('summary').addEventListener('click', () => navDropdowns.filter(item => item !== dropdown).forEach(item => item.removeAttribute('open')));
+      dropdown.addEventListener('pointerleave', event => { if (event.pointerType === 'mouse') dropdown.removeAttribute('open'); });
+      dropdown.addEventListener('focusout', () => requestAnimationFrame(() => { if (!dropdown.contains(document.activeElement)) dropdown.removeAttribute('open'); }));
+    });
+    document.addEventListener('pointerdown', event => { if (!event.target.closest('.nav-dropdown')) navDropdowns.forEach(item => item.removeAttribute('open')); });
+    document.addEventListener('keydown', event => {
+      if (event.key === 'Escape') {
+        const open = navigation.querySelector('details[open]');
+        if (open) { open.removeAttribute('open'); open.querySelector('summary').focus(); }
+        else if (navigation.classList.contains('open')) setMenuState(false, true);
+      }
+      if (event.key === 'Tab' && navigation.classList.contains('open')) {
+        const focusable = [menuButton, ...navigation.querySelectorAll('a, summary')].filter(element => element.offsetParent !== null);
+        const first = focusable[0];
+        const last = focusable.at(-1);
+        if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last.focus(); }
+        else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first.focus(); }
+      }
+    });
+    window.addEventListener('resize', () => { if (window.innerWidth > 1050 && navigation.classList.contains('open')) setMenuState(false); });
+  </script>
+</body>
+</html>
