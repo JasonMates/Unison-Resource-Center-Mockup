@@ -5,185 +5,19 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="description" content="Contact Unison Research & Education about IRB review, CME support, and clinical data analytics.">
   <title>Contact | Unison Research &amp; Education</title>
-  <style>
-    :root {
-      --blue: #18324d;
-      --blue-dark: #10273d;
-      --accent: #276a67;
-      --accent-soft: #e7f1ef;
-      --paper: #fbfcfc;
-      --ink: #1e2b35;
-      --muted: #5b6972;
-      --surface: #eef3f5;
-      --line: #dfe5e7;
-      --color-neutral-background-1: #fff;
-      --color-neutral-background-2: #f5f5f5;
-      --color-neutral-background-3: #f0f0f0;
-      --color-neutral-foreground-1: #242424;
-      --color-neutral-foreground-2: #616161;
-      --color-neutral-stroke-1: #d1d1d1;
-      --color-neutral-stroke-2: #e0e0e0;
-      --border-radius-small: 4px;
-      --border-radius-medium: 6px;
-      --border-radius-large: 8px;
-      --border-radius-xlarge: 12px;
-      --shadow-2: 0 1px 2px rgba(0, 0, 0, .14), 0 0 2px rgba(0, 0, 0, .12);
-      --shadow-8: 0 4px 8px rgba(0, 0, 0, .14), 0 0 2px rgba(0, 0, 0, .12);
-      --shadow-16: 0 8px 16px rgba(0, 0, 0, .14), 0 0 2px rgba(0, 0, 0, .12);
-    }
-    * { box-sizing: border-box; }
-    html { scroll-behavior: smooth; }
-    body { margin: 0; background: var(--paper); color: var(--ink); font-family: "Segoe UI", system-ui, -apple-system, BlinkMacSystemFont, sans-serif; font-size: 16px; line-height: 1.55; }
-    body.menu-open { overflow: hidden; }
-    a { color: inherit; text-decoration: none; }
-    button, input, select, textarea { font: inherit; }
-    button, a { -webkit-tap-highlight-color: transparent; }
-    :focus-visible { outline: 3px solid #fff; outline-offset: 3px; box-shadow: 0 0 0 6px var(--accent); }
-    .wrap { width: min(1180px, calc(100% - 48px)); margin: 0 auto; }
-    .skip-link { position: fixed; z-index: 1000; top: 12px; left: 12px; padding: 12px 16px; border-radius: var(--border-radius-large); background: #fff; color: var(--blue-dark); font-weight: 700; transform: translateY(-150%); transition: transform .15s ease; }
-    .skip-link:focus { transform: none; }
-
-    .button { min-height: 44px; padding: 0 20px; border: 1px solid transparent; border-radius: var(--border-radius-medium); display: inline-flex; align-items: center; justify-content: center; gap: 16px; background: var(--blue); color: #fff; font-size: .875rem; font-weight: 600; cursor: pointer; box-shadow: var(--shadow-2); transition: background .1s linear, box-shadow .1s linear; }
-    .button::after { content: "\2197"; font-size: 1.05rem; }
-    .button:hover { background: #254965; box-shadow: var(--shadow-8); }
-    .button:active, .button.dark { background: var(--blue-dark); box-shadow: var(--shadow-2); }
-
-    .site-header { position: sticky; z-index: 50; top: 0; width: 100%; padding: 11px 0; border-bottom: 1px solid rgba(24, 50, 77, .12); background: rgba(251, 252, 252, .94); box-shadow: var(--shadow-2); backdrop-filter: blur(14px); }
-    .nav { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 24px; }
-    .brand { width: 54px; height: 54px; padding: 5px; border-radius: 14px; background: rgba(255, 255, 255, .9); justify-self: start; }
-    .u-logo { width: 44px; height: 44px; display: grid; place-items: center; border: 2px solid var(--blue-dark); border-radius: 50%; color: var(--blue-dark); font-size: 1.55rem; font-weight: 750; line-height: 1; letter-spacing: -.08em; }
-    .nav-links { display: flex; align-items: center; justify-self: center; gap: 20px; padding: 0; }
-    .nav-links > a, .nav-dropdown summary { min-height: 28px; font-size: 1rem; font-weight: 600; white-space: nowrap; }
-    .nav-links > a:not(.button) { display: flex; align-items: center; }
-    .nav-links > a:not(.button):hover { color: var(--accent); }
-    .nav-links > a[aria-current="page"] { border-bottom: 2px solid var(--accent); }
-    .nav-dropdown { position: relative; }
-    .nav-dropdown summary { display: flex; align-items: center; gap: 6px; list-style: none; cursor: pointer; }
-    .nav-dropdown summary::-webkit-details-marker { display: none; }
-    .nav-dropdown summary::after { content: "\2304"; position: relative; top: -2px; color: var(--accent); font-size: .78rem; }
-    .nav-dropdown[open] summary, .nav-dropdown:hover summary { color: var(--accent); }
-    .dropdown-menu { position: absolute; top: calc(100% + 18px); left: -18px; width: max-content; min-width: 210px; padding: 15px 10px 10px; border: 1px solid #768bad; border-radius: 0 15px 15px 15px; display: grid; gap: 3px; background: #fff; box-shadow: var(--shadow-16); opacity: 0; visibility: hidden; transform: translateY(-7px); transition: opacity .2s cubic-bezier(0,0,0,1), transform .2s cubic-bezier(0,0,0,1), visibility .2s; }
-    .dropdown-menu::before { content: ""; position: absolute; left: -1px; top: -19px; width: 106px; height: 19px; border: 1px solid #768bad; border-bottom: 0; border-radius: 11px 11px 0 0; background: #fff; }
-    .nav-dropdown[open] .dropdown-menu, .nav-dropdown:hover .dropdown-menu { opacity: 1; visibility: visible; transform: none; }
-    .dropdown-menu a { position: relative; isolation: isolate; padding: 10px 12px; border-radius: var(--border-radius-medium); color: var(--blue-dark); font-size: .93rem; font-weight: 600; }
-    .dropdown-menu a::before { content: ""; position: absolute; z-index: -1; left: 7px; right: 7px; top: 52%; height: 1.05em; background: rgba(247, 210, 75, .62); clip-path: polygon(0 21%,7% 13%,18% 18%,31% 8%,47% 15%,61% 6%,77% 14%,91% 9%,100% 20%,98% 82%,84% 90%,68% 84%,51% 94%,34% 86%,18% 92%,2% 80%); opacity: 0; transform: translateY(-43%) scaleX(0) rotate(-.7deg) skewX(-3deg); transform-origin: left center; pointer-events: none; }
-    .dropdown-menu a:hover::before, .dropdown-menu a:focus-visible::before { animation: nav-highlighter-swipe .48s both; }
-    @keyframes nav-highlighter-swipe { 0%{opacity:0;transform:translate(-3%,-39%) scaleX(0) rotate(-1.2deg) skewX(-4deg)} 16%{opacity:.72;transform:translate(-2%,-47%) scaleX(.14) rotate(-.9deg) skewX(-3deg)} 49%{opacity:.62;transform:translate(0,-41%) scaleX(.54) rotate(.35deg) skewX(-1deg)} 76%{opacity:.7;transform:translate(0,-46%) scaleX(.82) rotate(-.35deg) skewX(1deg)} 100%{opacity:.66;transform:translate(0,-43%) scaleX(1) rotate(-.55deg)} }
-    .header-actions { display: flex; align-items: center; justify-self: end; gap: 8px; }
-    .header-sign-in { min-height: 44px; padding: 0 16px; font-size: .8rem; }
-    .menu-toggle { display: none; width: 44px; height: 44px; border: 1px solid var(--color-neutral-stroke-1); border-radius: var(--border-radius-medium); background: #fff; color: var(--blue-dark); font-size: 1.35rem; }
-
-    .contact-hero { padding: 70px 0 74px; background: var(--blue); color: #fff; }
-    .contact-hero-grid { display: grid; grid-template-columns: minmax(0, .86fr) minmax(0, 1.14fr); gap: 76px; align-items: start; }
-    .eyebrow { display: flex; align-items: center; gap: 10px; color: #b8d9d5; font-size: .8rem; font-weight: 600; letter-spacing: .08em; }
-    .eyebrow::before { content: ""; width: 22px; height: 2px; background: currentColor; }
-    h1 { max-width: 570px; margin: 18px 0 24px; font-size: clamp(3.25rem, 6.8vw, 6.1rem); font-weight: 600; letter-spacing: -.065em; line-height: .94; }
-    .contact-intro { max-width: 540px; margin: 0; color: #d7e1e8; font-size: 1.08rem; }
-    .contact-aside { margin-top: 42px; padding-top: 26px; border-top: 1px solid rgba(255,255,255,.2); display: grid; gap: 8px; color: #d7e1e8; }
-    .contact-aside strong { color: #fff; font-size: .875rem; }
-
-    .intake {
-      position: relative;
-      margin-top: 54px;
-      padding: 44px 36px 36px;
-      border-radius: 0 16px 16px 16px;
-      background: #fff;
-      color: var(--ink);
-      box-shadow: var(--shadow-16);
-    }
-    .intake h2.intake-tab {
-      margin: 0;
-      position: absolute;
-      top: -54px;
-      left: 0;
-      width: 48%;
-      height: 55px;
-      padding: 0 20px;
-      display: flex;
-      align-items: center;
-      border-radius: 10px 10px 0 0;
-      background: #fff;
-      color: var(--blue-dark);
-      font-size: 1.35rem;
-      font-weight: 700;
-      letter-spacing: .04em;
-      text-transform: uppercase;
-    }
-    .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
-    .field { margin-bottom: 18px; }
-    .field label { display: block; margin-bottom: 7px; color: var(--blue-dark); font-size: .875rem; font-weight: 600; }
-    .field input, .field select { width: 100%; min-height: 46px; border: 1px solid var(--color-neutral-stroke-1); border-bottom-color: var(--color-neutral-foreground-2); border-radius: var(--border-radius-small); padding: 10px 12px; background: var(--color-neutral-background-1); color: var(--color-neutral-foreground-1); }
-    .field input:hover, .field select:hover { border-bottom-color: var(--color-neutral-foreground-1); }
-    .field input:focus, .field select:focus { border-color: var(--color-neutral-stroke-1); border-bottom: 2px solid var(--accent); padding-bottom: 9px; }
-    .form-actions { display: flex; justify-content: flex-end; }
-    .form-note { min-height: 1.3em; margin: 13px 0 0; color: var(--muted); font-size: .8rem; }
-
-    .contact-paths { padding: 76px 0; background: var(--surface); }
-    .contact-paths h2 { margin: 0 0 30px; font-size: clamp(2.2rem, 4vw, 3.7rem); line-height: 1; letter-spacing: -.05em; }
-    .path-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
-    .path-card { padding: 26px; border: 1px solid var(--color-neutral-stroke-2); border-radius: var(--border-radius-xlarge); background: #fff; box-shadow: var(--shadow-2); }
-    .path-card strong { display: block; margin-bottom: 8px; color: var(--blue-dark); font-size: 1.2rem; }
-    .path-card span { color: var(--muted); }
-
-    footer { padding: 42px 0 24px; background: #10273d; color: #d7e1e8; }
-    .footer-grid { display: grid; grid-template-columns: 1.35fr repeat(2, .7fr); gap: 30px; }
-    .footer-identity { display: flex; align-items: center; gap: 12px; color: #fff; }
-    .footer-identity .u-logo { border-color: #fff; color: #fff; }
-    .footer-brand-copy strong { display: block; color: #fff; font-size: 1rem; letter-spacing: .08em; }
-    .footer-brand-copy span { display: block; color: #aebcc5; font-size: .72rem; letter-spacing: .1em; }
-    .footer-copy { max-width: 380px; margin-top: 18px; color: #c7d2d8; font-size: .9rem; }
-    footer h2 { margin: 0 0 12px; color: #fff; font-size: 1rem; }
-    footer nav { display: grid; gap: 8px; }
-    footer nav a, footer nav span { color: #c7d2d8; font-size: .85rem; }
-    footer nav a:hover { color: #fff; text-decoration: underline; }
-    .fineprint { margin-top: 28px; padding-top: 20px; border-top: 1px solid rgba(255,255,255,.14); color: #9fb0ba; font-size: .75rem; }
-
-    @media (max-width: 1050px) {
-      .nav { grid-template-columns: 1fr auto; }
-      .menu-toggle { display: block; position: relative; z-index: 3; }
-      .nav-links { display: none; position: fixed; inset: 0; padding: 110px 28px 30px; flex-direction: column; align-items: stretch; justify-content: flex-start; background: rgba(251,252,252,.98); overflow-y: auto; }
-      .nav-links.open { display: flex; }
-      .nav-links > a, .nav-dropdown summary { padding: 8px 0; font-size: 1.14rem; }
-      .nav-dropdown { width: 100%; }
-      .nav-dropdown summary { justify-content: space-between; }
-      .dropdown-menu { position: static; width: 100%; min-width: 0; margin: 4px 0 8px; padding: 10px; display: none; opacity: 1; visibility: visible; transform: none; box-shadow: none; }
-      .nav-dropdown[open] .dropdown-menu { display: grid; }
-      .dropdown-menu::before { display: none; }
-    }
-    @media (max-width: 860px) {
-      .contact-hero-grid { grid-template-columns: minmax(0, 1fr); gap: 46px; }
-      .path-grid { grid-template-columns: 1fr; }
-      .footer-grid { grid-template-columns: 1fr 1fr; }
-    }
-    @media (max-width: 600px) {
-      .wrap { width: min(100% - 30px, 1180px); }
-      .header-sign-in { padding: 0 13px; }
-      .contact-hero { padding: 46px 0 58px; }
-      h1 { font-size: clamp(3rem, 15vw, 4.25rem); }
-      .intake { padding: 38px 20px 28px; }
-      .field-row { grid-template-columns: 1fr; gap: 0; }
-      .contact-paths { padding: 62px 0; }
-      .footer-grid { grid-template-columns: 1fr; gap: 34px; }
-    }
-    @media (forced-colors: active) { .dropdown-menu a::before { display: none; } }
-    @media (prefers-reduced-motion: reduce) {
-      html { scroll-behavior: auto; }
-      *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
-      .dropdown-menu a:hover::before, .dropdown-menu a:focus-visible::before { animation: none; opacity: .66; transform: translateY(-43%) scaleX(1); }
-    }
-  </style>
+  <link rel="stylesheet" href="assets/css/contact.css">
 </head>
 <body>
   <a class="skip-link" href="#main-content">Skip to main content</a>
   <header class="site-header">
     <div class="wrap nav">
-      <a class="brand" href="Index.html" aria-label="Unison Research and Education home"><span class="u-logo" aria-hidden="true">U</span></a>
+      <a class="brand" href="index.html" aria-label="Unison Research and Education home"><span class="u-logo" aria-hidden="true">U</span></a>
       <nav class="nav-links" id="site-navigation" aria-label="Primary navigation">
-        <a href="Index.html">Home</a>
+        <a href="index.html">Home</a>
         <a href="Contact.html" aria-current="page">Contact</a>
-        <a href="Index.html#services">Services</a>
+        <a href="Services.html">Services</a>
         <details class="nav-dropdown"><summary>IRB</summary><div class="dropdown-menu"><a href="https://unison-re.org/about-us-1">About IRB</a><a href="https://unison-re.org/turnaround-times">Turnaround Times</a><a href="https://unison-re.org/contact-irb">Contact IRB</a></div></details>
-        <a href="https://unison-re.org/cme">CME</a>
+        <a href="CME.html">CME</a>
         <details class="nav-dropdown"><summary>Analytics</summary><div class="dropdown-menu"><a href="https://unison-re.org/about-us">About Analytics</a><a href="https://unison-re.org/contact-us">Contact Analytics</a></div></details>
         <details class="nav-dropdown"><summary>Careers</summary><div class="dropdown-menu"><a href="https://unison-re.org/cme-committee-member">CME Committee Member</a><a href="https://unison-re.org/irb-member">IRB Member</a></div></details>
         <a href="Resources.html">Resources</a>
@@ -235,60 +69,15 @@
   <footer>
     <div class="wrap">
       <div class="footer-grid">
-        <div><a class="footer-identity" href="Index.html" aria-label="Unison Research and Education home"><span class="u-logo" aria-hidden="true">U</span><span class="footer-brand-copy"><strong>UNISON</strong><span>RESEARCH &amp; EDUCATION</span></span></a><p class="footer-copy">Advancing ethical research, professional education, and healthcare quality through practical guidance and trusted expertise.</p></div>
+        <div><a class="footer-identity" href="index.html" aria-label="Unison Research and Education home"><span class="u-logo" aria-hidden="true">U</span><span class="footer-brand-copy"><strong>UNISON</strong><span>RESEARCH &amp; EDUCATION</span></span></a><p class="footer-copy">Advancing ethical research, professional education, and healthcare quality through practical guidance and trusted expertise.</p></div>
         <div><h2>Resources</h2><nav aria-label="Footer resource links"><a href="Resources.html#resources">IRB</a><a href="Resources.html#resources">CME</a><a href="Resources.html#resources">Education</a></nav></div>
-        <div><h2>Explore</h2><nav aria-label="Footer site links"><a href="Index.html">Start here</a><a href="Resources.html">Browse all</a><a href="Contact.html">Contact</a></nav></div>
+        <div><h2>Explore</h2><nav aria-label="Footer site links"><a href="index.html">Start here</a><a href="Resources.html">Browse all</a><a href="Contact.html">Contact</a></nav></div>
       </div>
       <div class="fineprint">Prototype only. Educational content shown here is illustrative and does not constitute an IRB determination, legal advice, or regulatory approval.</div>
     </div>
   </footer>
 
-  <script>
-    const menuButton = document.querySelector('.menu-toggle');
-    const navigation = document.querySelector('.nav-links');
-    const mainContent = document.querySelector('main');
-    const footer = document.querySelector('footer');
-    function setMenuState(isOpen, returnFocus = false) {
-      navigation.classList.toggle('open', isOpen);
-      menuButton.setAttribute('aria-expanded', String(isOpen));
-      menuButton.setAttribute('aria-label', isOpen ? 'Close menu' : 'Open menu');
-      menuButton.innerHTML = isOpen ? '&#10005;' : '&#9776;';
-      document.body.classList.toggle('menu-open', isOpen);
-      mainContent.inert = isOpen;
-      footer.inert = isOpen;
-      if (isOpen) requestAnimationFrame(() => navigation.querySelector('a, summary')?.focus());
-      else { navigation.querySelectorAll('details[open]').forEach(item => item.removeAttribute('open')); if (returnFocus) menuButton.focus(); }
-    }
-    menuButton.addEventListener('click', () => setMenuState(!navigation.classList.contains('open')));
-    navigation.querySelectorAll('a').forEach(link => link.addEventListener('click', () => setMenuState(false)));
-    const navDropdowns = [...navigation.querySelectorAll('.nav-dropdown')];
-    navDropdowns.forEach(dropdown => {
-      dropdown.querySelector('summary').addEventListener('click', () => navDropdowns.filter(item => item !== dropdown).forEach(item => item.removeAttribute('open')));
-      dropdown.addEventListener('pointerleave', event => { if (event.pointerType === 'mouse') dropdown.removeAttribute('open'); });
-      dropdown.addEventListener('focusout', () => requestAnimationFrame(() => { if (!dropdown.contains(document.activeElement)) dropdown.removeAttribute('open'); }));
-    });
-    document.addEventListener('pointerdown', event => { if (!event.target.closest('.nav-dropdown')) navDropdowns.forEach(item => item.removeAttribute('open')); });
-    document.addEventListener('keydown', event => {
-      if (event.key === 'Escape') {
-        const open = navigation.querySelector('details[open]');
-        if (open) { open.removeAttribute('open'); open.querySelector('summary').focus(); }
-        else if (navigation.classList.contains('open')) setMenuState(false, true);
-      }
-      if (event.key === 'Tab' && navigation.classList.contains('open')) {
-        const focusable = [menuButton, ...navigation.querySelectorAll('a, summary')].filter(element => element.offsetParent !== null);
-        const first = focusable[0];
-        const last = focusable.at(-1);
-        if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last.focus(); }
-        else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first.focus(); }
-      }
-    });
-    window.addEventListener('resize', () => { if (window.innerWidth > 1050 && navigation.classList.contains('open')) setMenuState(false); });
-    document.getElementById('contact-form').addEventListener('submit', event => {
-      event.preventDefault();
-      const note = document.getElementById('form-note');
-      if (!event.currentTarget.checkValidity()) { event.currentTarget.reportValidity(); note.textContent = 'Please complete the required fields.'; return; }
-      note.textContent = 'This prototype form is not connected, so your information was not sent.';
-    });
-  </script>
+  <script src="assets/js/site-navigation.js"></script>
+  <script src="assets/js/contact.js"></script>
 </body>
 </html>
