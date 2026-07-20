@@ -3,6 +3,75 @@
  * The resource catalog remains declarative in Resources.html for easy editing.
  */
 let activeResource = null;
+const resourceFolders = [...document.querySelectorAll('[data-resource-category]')];
+
+function syncResourceFolders(category){
+  resourceFolders.forEach(folder => {
+    const shouldOpen = Boolean(category) && folder.dataset.resourceCategory === category;
+    folder.classList.toggle('is-open', shouldOpen);
+    folder.setAttribute('aria-pressed', String(shouldOpen));
+    if (!shouldOpen) resetFolderPaperOffsets(folder);
+  });
+}
+
+function resetFolderPaperOffsets(folder){
+  folder.querySelectorAll('.folder-paper').forEach(paper => {
+    paper.style.setProperty('--magnet-x', '0px');
+    paper.style.setProperty('--magnet-y', '0px');
+    paper.style.setProperty('--magnet-rotate', '0deg');
+  });
+}
+
+function applyCategoryFilter(){
+  const category = document.getElementById('categoryFilter').value;
+  syncResourceFolders(category);
+  renderResources();
+}
+
+function toggleResourceFolder(event, category){
+  event.preventDefault();
+  const folder = resourceFolders.find(item => item.dataset.resourceCategory === category);
+  if (!folder) return;
+
+  const shouldOpen = !folder.classList.contains('is-open');
+  folder.classList.toggle('is-open', shouldOpen);
+  folder.setAttribute('aria-pressed', String(shouldOpen));
+  if (!shouldOpen) resetFolderPaperOffsets(folder);
+
+  const openFolders = resourceFolders.filter(item => item.classList.contains('is-open'));
+  document.getElementById('categoryFilter').value = openFolders.length === 1
+    ? openFolders[0].dataset.resourceCategory
+    : '';
+  document.getElementById('searchInput').value = '';
+  renderResources();
+  document.getElementById('resources').scrollIntoView({behavior:'smooth'});
+}
+
+resourceFolders.forEach(folder => {
+  const papers = [...folder.querySelectorAll('.folder-paper')];
+
+  folder.addEventListener('pointermove', event => {
+    if (event.pointerType && event.pointerType !== 'mouse' && event.pointerType !== 'pen') return;
+
+    const bounds = folder.querySelector('.resource-folder-shape').getBoundingClientRect();
+    const pointerPosition = Math.max(0, Math.min(1, (event.clientX - bounds.left) / bounds.width));
+
+    papers.forEach((paper, index) => {
+      const paperPosition = (index + 1) / (papers.length + 1);
+      const distance = pointerPosition - paperPosition;
+      const proximity = Math.max(0, 1 - Math.abs(distance) * 2.4);
+      const offsetX = distance * 13 * proximity;
+      const offsetY = -9 * proximity;
+      const rotation = distance * 7 * proximity;
+
+      paper.style.setProperty('--magnet-x', `${offsetX}px`);
+      paper.style.setProperty('--magnet-y', `${offsetY}px`);
+      paper.style.setProperty('--magnet-rotate', `${rotation}deg`);
+    });
+  }, { passive: true });
+
+  folder.addEventListener('pointerleave', () => resetFolderPaperOffsets(folder));
+});
 
 function renderResources(){
   const q = document.getElementById('searchInput').value.toLowerCase().trim();
@@ -32,6 +101,7 @@ function renderResources(){
 function setCategory(cat){
   document.getElementById('categoryFilter').value = cat;
   document.getElementById('searchInput').value = '';
+  syncResourceFolders(cat);
   renderResources();
   document.getElementById('resources').scrollIntoView({behavior:'smooth'});
 }
@@ -40,6 +110,7 @@ function quickSearch(term){
   document.getElementById('categoryFilter').value = '';
   document.getElementById('typeFilter').value = '';
   document.getElementById('audienceFilter').value = '';
+  syncResourceFolders('');
   renderResources();
   document.getElementById('resources').scrollIntoView({behavior:'smooth'});
 }
@@ -70,4 +141,3 @@ function forceClose(){ document.getElementById('resourceModal').classList.remove
 function closeModal(e){ if(e.target.id==='resourceModal') forceClose(); }
 document.addEventListener('keydown',e=>{if(e.key==='Escape') forceClose()});
 renderResources();
-

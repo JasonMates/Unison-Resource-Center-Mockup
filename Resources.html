@@ -76,30 +76,42 @@
         </div>
 
         <div class="category-grid">
-          <a class="category" href="#resources" onclick="setCategory('IRB')">
-            <div class="category-note">
-              <div class="icon">IRB</div>
-              <h3>IRB Resources</h3>
-              <p>Human-subjects determinations, exemptions, informed consent, study startup, regulatory references, protocol development, and investigator guidance.</p>
-            </div>
-            <div class="count">Browse IRB resources →</div>
-          </a>
-          <a class="category" href="#resources" onclick="setCategory('CME')">
-            <div class="category-note">
-              <div class="icon">CME</div>
-              <h3>CME Resources</h3>
-              <p>Continuing Medical Education planning, program development, learning objectives, evaluation, educational quality, and activity-management tools.</p>
-            </div>
-            <div class="count">Browse CME resources →</div>
-          </a>
-          <a class="category" href="#resources" onclick="setCategory('Education')">
-            <div class="category-note">
-              <div class="icon">EDU</div>
-              <h3>Education Resources</h3>
-              <p>Research fundamentals, student and early-career guidance, templates, professional development, and practical educational materials.</p>
-            </div>
-            <div class="count">Browse education resources →</div>
-          </a>
+          <button class="category resource-folder" data-resource-category="IRB" type="button" onclick="toggleResourceFolder(event, 'IRB')" aria-label="Toggle IRB resources" aria-pressed="false">
+            <span class="resource-folder-shape" aria-hidden="true">
+              <span class="resource-folder-back">
+                <span class="folder-paper folder-paper-1"></span>
+                <span class="folder-paper folder-paper-2"></span>
+                <span class="folder-paper folder-paper-3"></span>
+                <span class="resource-folder-front"></span>
+                <span class="resource-folder-front resource-folder-front-right"></span>
+                <span class="resource-folder-title">IRB Resources</span>
+              </span>
+            </span>
+          </button>
+          <button class="category resource-folder" data-resource-category="CME" type="button" onclick="toggleResourceFolder(event, 'CME')" aria-label="Toggle CME resources" aria-pressed="false">
+            <span class="resource-folder-shape" aria-hidden="true">
+              <span class="resource-folder-back">
+                <span class="folder-paper folder-paper-1"></span>
+                <span class="folder-paper folder-paper-2"></span>
+                <span class="folder-paper folder-paper-3"></span>
+                <span class="resource-folder-front"></span>
+                <span class="resource-folder-front resource-folder-front-right"></span>
+                <span class="resource-folder-title">CME Resources</span>
+              </span>
+            </span>
+          </button>
+          <button class="category resource-folder" data-resource-category="Education" type="button" onclick="toggleResourceFolder(event, 'Education')" aria-label="Toggle Education resources" aria-pressed="false">
+            <span class="resource-folder-shape" aria-hidden="true">
+              <span class="resource-folder-back">
+                <span class="folder-paper folder-paper-1"></span>
+                <span class="folder-paper folder-paper-2"></span>
+                <span class="folder-paper folder-paper-3"></span>
+                <span class="resource-folder-front"></span>
+                <span class="resource-folder-front resource-folder-front-right"></span>
+                <span class="resource-folder-title">Education Resources</span>
+              </span>
+            </span>
+          </button>
         </div>
       </div>
     </section>
@@ -115,7 +127,7 @@
 
         <div class="filterbar">
           <input id="searchInput" type="search" aria-label="Search resource titles, descriptions, and tags" placeholder="Search titles, descriptions, and tags..." oninput="renderResources()" />
-          <select id="categoryFilter" aria-label="Filter by section" onchange="renderResources()">
+          <select id="categoryFilter" aria-label="Filter by section" onchange="applyCategoryFilter()">
             <option value="">All sections</option>
             <option>IRB</option>
             <option>CME</option>

@@ -12,9 +12,40 @@ const observer = new IntersectionObserver(entries => {
 }, { threshold: .12 });
 document.querySelectorAll('.reveal').forEach(element => observer.observe(element));
 
+const cursorCards = [...document.querySelectorAll('[data-cursor-card]')];
+cursorCards.forEach(card => {
+  let lastUpdate = 0;
+
+  card.addEventListener('pointermove', event => {
+    if (event.pointerType && event.pointerType !== 'mouse' && event.pointerType !== 'pen') return;
+
+    const currentTime = performance.now();
+    if (currentTime - lastUpdate < 50) return;
+    lastUpdate = currentTime;
+
+    const bounds = card.getBoundingClientRect();
+    const halfWidth = bounds.width / 2;
+    const halfHeight = bounds.height / 2;
+    const pointerX = event.clientX - bounds.left - halfWidth;
+    const pointerY = event.clientY - bounds.top - halfHeight;
+
+    if (Math.abs(pointerX) < .01 && Math.abs(pointerY) < .01) return;
+
+    const horizontalScale = Math.abs(pointerX) > .01 ? halfWidth / Math.abs(pointerX) : Infinity;
+    const verticalScale = Math.abs(pointerY) > .01 ? halfHeight / Math.abs(pointerY) : Infinity;
+    const edgeScale = Math.min(horizontalScale, verticalScale);
+    const borderX = halfWidth + pointerX * edgeScale;
+    const borderY = halfHeight + pointerY * edgeScale;
+
+    card.style.setProperty('--card-mouse-x', `${borderX}px`);
+    card.style.setProperty('--card-mouse-y', `${borderY}px`);
+  }, { passive: true });
+});
+
 const counters = [...document.querySelectorAll('[data-counter]')];
 const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
 const teamMeasure = document.querySelector('.team-measure');
+const heroSection = document.querySelector('.hero');
 const globe = document.querySelector('.network-globe');
 const globeCanvas = document.querySelector('.network-globe-canvas');
 const globeContext = globeCanvas?.getContext('2d');
@@ -32,10 +63,13 @@ const globePointer = {
   y: 0,
   targetX: 0,
   targetY: 0,
-  normalX: 0,
-  normalY: 1,
   energy: 0,
   phase: 0,
+  sweepStartX: 0,
+  sweepStartY: 0,
+  sweepEndX: 0,
+  sweepEndY: 0,
+  sweepUntil: 0,
   lastClientX: undefined,
   lastClientY: undefined
 };
@@ -74,9 +108,16 @@ function resizeGlobeCanvas() {
     textBounds = titleRange.getBoundingClientRect();
   }
 
-  globeHubX = textBounds
-    ? Math.min(globeWidth - 18, textBounds.right - bounds.left + 28)
+  const titleAnchoredHub = textBounds
+    ? textBounds.right - bounds.left + 28
     : globeWidth * .6;
+  const responsiveHubLimit = globeWidth <= 760
+    ? globeWidth * .56
+    : globeWidth <= 1050
+      ? globeWidth * .60
+      : globeWidth - 18;
+
+  globeHubX = Math.min(responsiveHubLimit, titleAnchoredHub);
   globeHubY = globeHeight * .485;
   globe.style.setProperty('--globe-hub-x', `${globeHubX}px`);
   globe.style.setProperty('--globe-hub-y', `${globeHubY}px`);
@@ -85,12 +126,31 @@ function resizeGlobeCanvas() {
   globeContext.setTransform(pixelRatio, 0, 0, pixelRatio, 0, 0);
 }
 
+function pointToSegmentDistance(pointX, pointY, startX, startY, endX, endY) {
+  const segmentX = endX - startX;
+  const segmentY = endY - startY;
+  const segmentLengthSquared = segmentX * segmentX + segmentY * segmentY;
+
+  if (segmentLengthSquared < .001) {
+    return Math.hypot(pointX - startX, pointY - startY);
+  }
+
+  const projection = Math.max(0, Math.min(1,
+    ((pointX - startX) * segmentX + (pointY - startY) * segmentY) / segmentLengthSquared
+  ));
+  const closestX = startX + segmentX * projection;
+  const closestY = startY + segmentY * projection;
+  return Math.hypot(pointX - closestX, pointY - closestY);
+}
+
 function drawGlobe(rotation, elapsed = 0, frameDuration = 16.67) {
   if (!globeContext || !globeWidth || !globeHeight) return;
 
   globeContext.clearRect(0, 0, globeWidth, globeHeight);
 
-  const radius = globeHeight * .98;
+  const radius = globeWidth <= 760
+    ? Math.min(globeHeight * .98, globeWidth * 1.05)
+    : globeHeight * .98;
   const hub = { x: globeHubX, y: globeHubY };
   const pole = { x: -.818, y: -.52, z: .245 };
   const tangentOne = { x: .287, y: 0, z: .958 };
@@ -147,21 +207,41 @@ function drawGlobe(rotation, elapsed = 0, frameDuration = 16.67) {
       const visibleSteps = Math.max(2, Math.ceil(28 * drawProgress));
       const routePoints = [];
       let closestPointerDistance = Infinity;
+      let closestPointerStep = 0;
+      const usePointerSweep = globePointer.sweepUntil > performance.now();
 
       for (let step = 0; step <= visibleSteps; step += 1) {
         const progress = Math.min(step / 28, drawProgress);
         const projected = projectPoint(route.length * progress);
-        const pointerDistance = Math.hypot(projected.x - globePointer.x, projected.y - globePointer.y);
-        closestPointerDistance = Math.min(closestPointerDistance, pointerDistance);
+        const pointerDistance = usePointerSweep
+          ? pointToSegmentDistance(
+            projected.x,
+            projected.y,
+            globePointer.sweepStartX,
+            globePointer.sweepStartY,
+            globePointer.sweepEndX,
+            globePointer.sweepEndY
+          )
+          : Math.hypot(projected.x - globePointer.x, projected.y - globePointer.y);
+
+        if (pointerDistance < closestPointerDistance) {
+          closestPointerDistance = pointerDistance;
+          closestPointerStep = step;
+        }
         routePoints.push({ ...projected, progress });
       }
 
       if (globePointer.energy > .01 && closestPointerDistance < strumRadius) {
         const proximity = 1 - closestPointerDistance / strumRadius;
         const impulse = globePointer.energy * proximity * proximity;
+        const tangentStart = routePoints[Math.max(0, closestPointerStep - 1)];
+        const tangentEnd = routePoints[Math.min(routePoints.length - 1, closestPointerStep + 1)];
+        const tangentX = tangentEnd.x - tangentStart.x;
+        const tangentY = tangentEnd.y - tangentStart.y;
+        const tangentLength = Math.hypot(tangentX, tangentY) || 1;
         route.strumEnergy = Math.min(1, Math.max(route.strumEnergy, impulse));
-        route.strumNormalX = globePointer.normalX;
-        route.strumNormalY = globePointer.normalY;
+        route.strumNormalX = -tangentY / tangentLength;
+        route.strumNormalY = tangentX / tangentLength;
       }
 
       const oscillation = Math.sin(globePointer.phase) * 11 * route.strumEnergy;
@@ -233,8 +313,8 @@ function stopGlobeRotation() {
   });
 }
 
-if (globeCanvas) {
-  globeCanvas.addEventListener('pointermove', event => {
+if (heroSection && globeCanvas) {
+  heroSection.addEventListener('pointermove', event => {
     if (event.pointerType && event.pointerType !== 'mouse' && event.pointerType !== 'pen') return;
 
     const bounds = globeCanvas.getBoundingClientRect();
@@ -250,8 +330,11 @@ if (globeCanvas) {
       const movement = Math.hypot(movementX, movementY);
 
       if (movement > .5) {
-        globePointer.normalX = -movementY / movement;
-        globePointer.normalY = movementX / movement;
+        globePointer.sweepStartX = globePointer.lastClientX - bounds.left;
+        globePointer.sweepStartY = globePointer.lastClientY - bounds.top;
+        globePointer.sweepEndX = globePointer.targetX;
+        globePointer.sweepEndY = globePointer.targetY;
+        globePointer.sweepUntil = performance.now() + 80;
         globePointer.energy = Math.min(1, globePointer.energy + movement / 24);
       }
     }
@@ -260,9 +343,10 @@ if (globeCanvas) {
     globePointer.lastClientY = event.clientY;
   });
 
-  globeCanvas.addEventListener('pointerleave', () => {
+  heroSection.addEventListener('pointerleave', () => {
     globePointer.lastClientX = undefined;
     globePointer.lastClientY = undefined;
+    globePointer.sweepUntil = 0;
   });
 }
 
