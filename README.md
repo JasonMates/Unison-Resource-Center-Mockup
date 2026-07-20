@@ -14,6 +14,7 @@ Unison Mockup/
 |-- Services.html
 `-- assets/
     |-- css/
+    |   |-- site-navigation.css
     |   |-- index.css
     |   |-- contact.css
     |   |-- resources.css
@@ -33,6 +34,7 @@ Unison Mockup/
 
 - HTML files contain document structure and page content.
 - Each page has a matching stylesheet under `assets/css/`.
+- `site-navigation.css` owns the shared tablet and mobile navigation layout.
 - `site-navigation.js` owns behavior shared by every header: the mobile menu,
   dropdown dismissal, keyboard handling, focus containment, and responsive reset.
 - Matching page scripts own only page-specific interactions.
