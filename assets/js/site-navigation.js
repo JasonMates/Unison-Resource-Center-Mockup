@@ -23,6 +23,17 @@
   );
   const navDropdowns = [...navigation.querySelectorAll('.nav-dropdown')];
 
+  function syncDesktopDropdownState() {
+    const hasOpenDropdown = desktopHoverQuery.matches
+      && navDropdowns.some(dropdown => dropdown.hasAttribute('open'));
+    navigation.classList.toggle('has-open-dropdown', hasOpenDropdown);
+  }
+
+  const dropdownStateObserver = new MutationObserver(syncDesktopDropdownState);
+  navDropdowns.forEach(dropdown => {
+    dropdownStateObserver.observe(dropdown, { attributes: true, attributeFilter: ['open'] });
+  });
+
   function closeDropdowns(except = null) {
     navDropdowns
       .filter(dropdown => dropdown !== except)
@@ -73,6 +84,7 @@
 
   navDropdowns.forEach(dropdown => {
     const summary = dropdown.querySelector('summary');
+    const primaryDestination = dropdown.querySelector('.dropdown-menu a');
     let closeTimer;
 
     function cancelScheduledClose() {
@@ -89,10 +101,12 @@
     }
 
     summary?.addEventListener('click', event => {
-      // Mouse users get hover-driven menus. Keyboard-generated clicks retain
-      // native <details> behavior, and compact/touch navigation remains tappable.
+      // On desktop, hovering previews the menu and clicking its label follows
+      // the section's primary destination. Keyboard and compact/touch users
+      // retain the native disclosure behavior so every submenu stays reachable.
       if (desktopHoverQuery.matches && event.detail > 0) {
         event.preventDefault();
+        if (primaryDestination) window.location.assign(primaryDestination.href);
         return;
       }
 
@@ -141,5 +155,8 @@
     if (!compactNavigationQuery.matches && navigation.classList.contains('open')) {
       setMenuState(false);
     }
+    syncDesktopDropdownState();
   });
+
+  syncDesktopDropdownState();
 }());

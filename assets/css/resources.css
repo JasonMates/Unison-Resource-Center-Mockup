@@ -270,7 +270,7 @@ h2{font-family:inherit;color:var(--navy);font-size:clamp(2.25rem,4.5vw,4rem);fon
 .eyebrow{color:var(--teal);font-size:.8rem;font-weight:600;letter-spacing:.08em;text-transform:none}
 #categories{padding:32px 0 44px}
 #categories .section-head{position:relative;z-index:6;margin-bottom:16px}
-.category-grid{grid-template-columns:repeat(3,minmax(0,260px));justify-content:center;gap:72px}
+.category-grid{grid-template-columns:repeat(4,minmax(0,260px));justify-content:center;gap:32px}
 .category.resource-folder{
   --folder-color:#315a75;
   --folder-back-color:#315a75;

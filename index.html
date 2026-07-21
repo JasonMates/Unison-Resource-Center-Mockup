@@ -17,8 +17,6 @@
       </a>
       <nav class="nav-links" id="site-navigation" aria-label="Primary navigation">
         <a href="index.html" aria-current="page">Home</a>
-        <a href="Contact.html">Contact</a>
-        <a href="Services.html">Services</a>
         <details class="nav-dropdown">
           <summary>IRB</summary>
           <div class="dropdown-menu">
@@ -27,7 +25,14 @@
             <a href="https://unison-re.org/contact-irb">Contact IRB</a>
           </div>
         </details>
-        <a href="CME.html">CME</a>
+        <details class="nav-dropdown nav-dropdown-cme">
+          <summary>CME</summary>
+          <div class="dropdown-menu">
+            <a href="CME.html">CME Overview</a>
+            <a href="CME.html#services">CME Services</a>
+            <a href="CME.html#contact-us">Request a Consultation</a>
+          </div>
+        </details>
         <details class="nav-dropdown">
           <summary>Analytics</summary>
           <div class="dropdown-menu">
@@ -42,7 +47,22 @@
             <a href="https://unison-re.org/irb-member">IRB Member</a>
           </div>
         </details>
-        <a href="Resources.html">Resources</a>
+        <details class="nav-dropdown">
+          <summary>Services</summary>
+          <div class="dropdown-menu">
+            <a href="Services.html">Explore Services</a>
+            <a href="Contact.html">Contact Us</a>
+          </div>
+        </details>
+        <details class="nav-dropdown nav-dropdown-resources">
+          <summary>Resources</summary>
+          <div class="dropdown-menu">
+            <a href="Resources.html">All Resources</a>
+            <a href="Resources.html?category=IRB#resources">IRB Resources</a>
+            <a href="Resources.html?category=CME#resources">CME Resources</a>
+            <a href="Resources.html?category=Analytics#resources">Analytics Resources</a>
+          </div>
+        </details>
       </nav>
       <div class="header-actions">
         <a class="button dark header-sign-in" href="https://unison-re.org/m/account">Sign in</a>

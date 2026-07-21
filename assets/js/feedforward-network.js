@@ -31,6 +31,7 @@
     const secondaryRandom = Math.abs(Math.sin((index + 11) * 8.731) * 19341.719) % 1;
     const tertiaryRandom = Math.abs(Math.sin((index + 19) * 14.293) * 23817.417) % 1;
     const brightnessRandom = Math.abs(Math.sin((index + 29) * 11.947) * 26731.631) % 1;
+    const brightnessRank = ((index * 53) % routeCount) / (routeCount - 1);
     const group = Math.floor(index / layerSizes[0]);
     const travelDuration = 600 + secondaryRandom * 380;
     const holdDuration = 420;
@@ -46,7 +47,7 @@
       ],
       opacity: .006 + brightnessRandom * .024,
       lineWidth: .28 + secondaryRandom * .30,
-      signalBrightness: .12 + brightnessRandom * .76,
+      signalBrightness: .10 + brightnessRank * .90,
       cycle,
       cycleOffset: tertiaryRandom * cycle,
       travelDuration,
@@ -89,13 +90,25 @@
 
     const frameInset = 3;
     const availableHeight = height - frameInset * 2;
-    const layerXPositions = width < 1360 ? compactLayerXPositions : desktopLayerXPositions;
+    const compactLayout = width < 1360;
+    const layerXPositions = compactLayout ? compactLayerXPositions : desktopLayerXPositions;
     nodes.forEach((layer, layerIndex) => {
       layer.forEach((node, nodeIndex) => {
         const verticalPosition = layer.length === 1 ? .5 : nodeIndex / (layer.length - 1);
         const jitterEnvelope = Math.sin(Math.PI * verticalPosition);
         const jitter = Math.sin((layerIndex + 2) * (nodeIndex + 3) * 2.17) * 2.5 * jitterEnvelope;
-        node.x = width * layerXPositions[layerIndex];
+        const isOuterLayer = layerIndex === 0 || layerIndex === nodes.length - 1;
+        const scatterLimit = Math.min(7, width * .007);
+        const scatterRank = layer.length === 1
+          ? .5
+          : ((nodeIndex * 17 + layerIndex * 7) % layer.length) / (layer.length - 1);
+        let horizontalScatter = 0;
+        if (isOuterLayer) {
+          horizontalScatter = compactLayout
+            ? scatterRank * scatterLimit * (layerIndex === 0 ? 1 : -1)
+            : (scatterRank - .5) * scatterLimit * 2;
+        }
+        node.x = width * layerXPositions[layerIndex] + horizontalScatter;
         node.y = frameInset + availableHeight * verticalPosition + jitter;
       });
     });

@@ -140,4 +140,22 @@ function showPrototypeLink(){
 function forceClose(){ document.getElementById('resourceModal').classList.remove('open'); document.body.style.overflow=''; }
 function closeModal(e){ if(e.target.id==='resourceModal') forceClose(); }
 document.addEventListener('keydown',e=>{if(e.key==='Escape') forceClose()});
-renderResources();
+
+function initializeResourceView(){
+  const requestedCategory = new URLSearchParams(location.search).get('category');
+  const categoryFilter = document.getElementById('categoryFilter');
+  const availableCategories = [...categoryFilter.options]
+    .map(option => option.value)
+    .filter(Boolean);
+  const matchingCategory = availableCategories.find(category =>
+    category.toLowerCase() === requestedCategory?.toLowerCase()
+  );
+
+  if (matchingCategory) {
+    categoryFilter.value = matchingCategory;
+    syncResourceFolders(matchingCategory);
+  }
+  renderResources();
+}
+
+initializeResourceView();
