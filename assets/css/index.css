@@ -574,17 +574,17 @@ section[id] { scroll-margin-top: 92px; }
   font-size: clamp(3rem, 5vw, 5.35rem);
   line-height: .98;
 }
-.ai-transformer {
+.feedforward-network {
   position: absolute;
   z-index: 0;
   top: 0;
   bottom: 0;
   left: 50%;
-  width: min(1360px, calc(100% - 24px));
+  width: min(1360px, 100%);
   height: 100%;
   transform: translateX(-50%);
 }
-.ai-transformer-canvas { display: block; width: 100%; height: 100%; }
+.feedforward-network-canvas { display: block; width: 100%; height: 100%; }
 .difference-list {
   display: grid;
   grid-template-columns: minmax(0, 1fr);
@@ -798,7 +798,7 @@ footer nav a:hover { color: #fff; text-decoration: underline; text-underline-off
   .about-photo { inset: 0; }
   .about-points, .field-row { grid-template-columns: 1fr; }
   .different { min-height: 0; padding: 70px 0; }
-  .ai-transformer { width: calc(100% - 12px); }
+  .feedforward-network { width: 100%; }
   .different .section-title { font-size: clamp(2.65rem, 11.5vw, 4.25rem); }
   .difference-list { margin-top: 12px; }
   .difference-card { grid-template-columns: 38px 1fr; gap: 12px; padding: 24px 18px; }
