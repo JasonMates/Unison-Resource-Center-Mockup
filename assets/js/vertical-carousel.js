@@ -34,7 +34,7 @@
           .reduce((total, height) => total + height, 0);
         return Math.max(190, trackHeight - visibleTail - gutter * (visibleCount - 1));
       }
-      return tailHeights[position - 1] ?? 10;
+      return tailHeights[position - 1] === undefined ? 10 : tailHeights[position - 1];
     });
 
     const previewIndex = order.indexOf(previewPanel);
@@ -67,8 +67,28 @@
   }
 
   function setPanelSlot(panel, slot) {
-    panel.style.setProperty('--carousel-panel-top', `${slot.top}px`);
-    panel.style.setProperty('--carousel-panel-height', `${slot.height}px`);
+    panel.style.top = `${slot.top}px`;
+    panel.style.height = `${slot.height}px`;
+  }
+
+  function waitForAnimation(animation, duration) {
+    return new Promise(resolve => {
+      let settled = false;
+      const finish = () => {
+        if (settled) return;
+        settled = true;
+        resolve();
+      };
+
+      if (typeof animation.addEventListener === 'function') {
+        animation.addEventListener('finish', finish, { once: true });
+        animation.addEventListener('cancel', finish, { once: true });
+      }
+      if (animation.finished && typeof animation.finished.then === 'function') {
+        animation.finished.then(finish, finish);
+      }
+      window.setTimeout(finish, duration + 120);
+    });
   }
 
   function applyGeometry(previewPanel = previewedPanel) {
@@ -167,7 +187,7 @@
       // them in a continuous chain below the final surviving panel, and swap
       // them back to their originals once the movement is complete.
       const survivingPanels = queue.filter(panel => !wrappedSet.has(panel));
-      const lastSurvivor = survivingPanels.at(-1);
+      const lastSurvivor = survivingPanels[survivingPanels.length - 1];
       const lastSurvivorStart = startSlots.get(lastSurvivor);
       let reentryTop = lastSurvivorStart.top + lastSurvivorStart.height + gutter;
 
@@ -225,8 +245,8 @@
     });
 
     reentryClones.forEach(({ clone, start, end }) => {
-      clone.style.setProperty('--carousel-panel-top', `${start.top}px`);
-      clone.style.setProperty('--carousel-panel-height', `${start.height}px`);
+      clone.style.top = `${start.top}px`;
+      clone.style.height = `${start.height}px`;
       animations.push(clone.animate([
         { offset: 0, top: `${start.top}px`, height: `${start.height}px`, easing: 'cubic-bezier(.2, .72, .2, 1)' },
         { offset: movementEnd, top: `${end.top}px`, height: `${end.height}px` },
@@ -238,7 +258,7 @@
       }));
     });
 
-    await Promise.all(animations.map(animation => animation.finished.catch(() => undefined)));
+    await Promise.all(animations.map(animation => waitForAnimation(animation, duration)));
     queue = nextQueue;
     queue.forEach(panel => track.append(panel));
     applyGeometry(null);
@@ -262,7 +282,7 @@
 
   function rotateBackward() {
     if (isAnimating) return;
-    const wrappedPanel = queue.at(-1);
+    const wrappedPanel = queue[queue.length - 1];
     animateQueue([wrappedPanel, ...queue.slice(0, -1)], [wrappedPanel], 'backward');
   }
 
@@ -327,9 +347,15 @@
   previousButton?.addEventListener('click', rotateBackward);
   nextButton?.addEventListener('click', () => promotePanel(queue[0]));
 
-  new ResizeObserver(() => {
-    if (!isAnimating) applyGeometry(null);
-  }).observe(track);
+  if ('ResizeObserver' in window) {
+    new ResizeObserver(() => {
+      if (!isAnimating) applyGeometry(null);
+    }).observe(track);
+  } else {
+    window.addEventListener('resize', () => {
+      if (!isAnimating) applyGeometry(null);
+    });
+  }
 
   syncQueue({ announce: false });
   applyGeometry(null);

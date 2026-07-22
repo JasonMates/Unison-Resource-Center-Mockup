@@ -6,6 +6,8 @@
  * disclosure pattern used by large healthcare organizations.
  */
 
+html { background-color: rgb(251, 252, 252); }
+
 @media (min-width: 1181px) and (hover: hover) and (pointer: fine) {
   .nav-links > a,
   .nav-dropdown > summary {
