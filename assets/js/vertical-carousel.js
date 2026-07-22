@@ -98,6 +98,13 @@
     return new Promise(resolve => {
       let animationStart;
 
+      entries.forEach(({ element, end }) => {
+        element.style.top = `${end.top}px`;
+        element.style.height = `${end.height}px`;
+        element.style.transformOrigin = 'center top';
+        element.style.willChange = 'transform';
+      });
+
       function renderFrame(timestamp) {
         if (animationStart === undefined) animationStart = timestamp;
         const timelineProgress = Math.min(1, (timestamp - animationStart) / duration);
@@ -105,12 +112,21 @@
         const easedProgress = 1 - Math.pow(1 - movementProgress, 3);
 
         entries.forEach(({ element, start, end }) => {
-          element.style.top = `${start.top + (end.top - start.top) * easedProgress}px`;
-          element.style.height = `${start.height + (end.height - start.height) * easedProgress}px`;
+          const currentTop = start.top + (end.top - start.top) * easedProgress;
+          const currentHeight = start.height + (end.height - start.height) * easedProgress;
+          const translateY = currentTop - end.top;
+          const scaleY = currentHeight / Math.max(end.height, 1);
+          element.style.transform = `translate3d(0, ${translateY}px, 0) scaleY(${scaleY})`;
         });
 
         if (timelineProgress < 1) requestAnimationFrame(renderFrame);
-        else resolve();
+        else {
+          entries.forEach(({ element }) => {
+            element.style.transform = 'none';
+            element.style.willChange = '';
+          });
+          resolve();
+        }
       }
 
       requestAnimationFrame(renderFrame);
@@ -261,11 +277,14 @@
       });
 
       await runFrameAnimation(frameEntries, duration, movementEnd);
+      wrappedPanels.forEach(panel => { panel.style.visibility = 'hidden'; });
       queue = nextQueue;
       queue.forEach(panel => track.append(panel));
       applyGeometry(null);
       syncQueue();
+      await new Promise(resolve => requestAnimationFrame(resolve));
       reentryClones.forEach(({ clone }) => clone.remove());
+      wrappedPanels.forEach(panel => { panel.style.visibility = ''; });
       track.classList.remove('is-queueing');
       isAnimating = false;
       return;
