@@ -174,7 +174,28 @@
     <section class="about" id="about">
       <div class="wrap about-grid">
         <div class="about-visual reveal">
-          <div class="about-photo" aria-hidden="true"></div>
+          <section class="about-carousel" data-vertical-carousel aria-label="Unison capabilities carousel" aria-roledescription="carousel">
+            <div class="about-carousel-controls" role="group" aria-label="Carousel navigation">
+              <button type="button" data-carousel-previous aria-label="Previous carousel item">
+                <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 13.5V2.5M3.5 7 8 2.5 12.5 7"/></svg>
+              </button>
+              <button type="button" data-carousel-next aria-label="Next carousel item">
+                <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 2.5v11M3.5 9 8 13.5 12.5 9"/></svg>
+              </button>
+            </div>
+
+            <div class="about-carousel-track">
+              <button class="about-carousel-panel about-carousel-panel--navy" type="button" data-carousel-panel data-title="Research oversight" aria-current="true" aria-label="Show carousel item 1 of 8"></button>
+              <button class="about-carousel-panel about-carousel-panel--yellow" type="button" data-carousel-panel data-title="Medical education" aria-label="Show carousel item 2 of 8"></button>
+              <button class="about-carousel-panel about-carousel-panel--teal" type="button" data-carousel-panel data-title="Clinical analytics" aria-label="Show carousel item 3 of 8"></button>
+              <button class="about-carousel-panel about-carousel-panel--sky" type="button" data-carousel-panel data-title="Integrated support" aria-label="Show carousel item 4 of 8"></button>
+              <button class="about-carousel-panel about-carousel-panel--blue" type="button" data-carousel-panel data-title="Expert guidance" aria-label="Show carousel item 5 of 8"></button>
+              <button class="about-carousel-panel about-carousel-panel--sand" type="button" data-carousel-panel data-title="Professional education" aria-label="Show carousel item 6 of 8"></button>
+              <button class="about-carousel-panel about-carousel-panel--slate" type="button" data-carousel-panel data-title="Connected workflows" aria-label="Show carousel item 7 of 8"></button>
+              <button class="about-carousel-panel about-carousel-panel--clay" type="button" data-carousel-panel data-title="Better outcomes" aria-label="Show carousel item 8 of 8"></button>
+            </div>
+            <p class="visually-hidden" aria-live="polite" aria-atomic="true" data-carousel-status>Item 1 of 8: Research oversight</p>
+          </section>
         </div>
         <div class="about-copy reveal">
           <div class="eyebrow">Who we are</div>
@@ -264,6 +285,7 @@
 
   <script src="assets/js/site-navigation.js"></script>
   <script src="assets/js/feedforward-network.js"></script>
+  <script src="assets/js/vertical-carousel.js"></script>
   <script src="assets/js/index.js"></script>
 </body>
 </html>
