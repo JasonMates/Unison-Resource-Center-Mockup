@@ -119,8 +119,19 @@ function resizeGlobeCanvas() {
 
   globeHubX = Math.min(responsiveHubLimit, titleAnchoredHub);
   globeHubY = globeHeight * .485;
+  const globeRadius = globeWidth <= 760
+    ? Math.min(globeHeight * .98, globeWidth * 1.05)
+    : globeHeight * .98;
+  const sphereCenterX = globeHubX - globeRadius * -.818;
+  const sphereCenterY = globeHubY - globeRadius * -.52;
+  const glowCenterBias = .72;
+  const globeCenterX = globeHubX + (sphereCenterX - globeHubX) * glowCenterBias;
+  const globeCenterY = globeHubY + (sphereCenterY - globeHubY) * glowCenterBias;
   globe.style.setProperty('--globe-hub-x', `${globeHubX}px`);
   globe.style.setProperty('--globe-hub-y', `${globeHubY}px`);
+  globe.style.setProperty('--globe-center-x', `${globeCenterX}px`);
+  globe.style.setProperty('--globe-center-y', `${globeCenterY}px`);
+  globe.style.setProperty('--globe-glow-size', `${globeRadius * 2.4}px`);
   globeCanvas.width = Math.round(globeWidth * pixelRatio);
   globeCanvas.height = Math.round(globeHeight * pixelRatio);
   globeContext.setTransform(pixelRatio, 0, 0, pixelRatio, 0, 0);
