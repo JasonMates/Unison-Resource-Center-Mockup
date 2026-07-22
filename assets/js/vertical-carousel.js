@@ -17,6 +17,9 @@
   const nextButton = carousel.querySelector('[data-carousel-next]');
   const status = carousel.querySelector('[data-carousel-status]');
   const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const safariFrameFallback = /Apple Computer/.test(navigator.vendor)
+    && /Safari/.test(navigator.userAgent)
+    && !/(CriOS|FxiOS|EdgiOS|OPiOS)/.test(navigator.userAgent);
   const visibleCount = Math.min(6, panels.length);
   const gutter = 6;
   const tailHeights = [52, 30, 20, 14, 10];
@@ -88,6 +91,29 @@
         animation.finished.then(finish, finish);
       }
       window.setTimeout(finish, duration + 120);
+    });
+  }
+
+  function runFrameAnimation(entries, duration, movementEnd) {
+    return new Promise(resolve => {
+      let animationStart;
+
+      function renderFrame(timestamp) {
+        if (animationStart === undefined) animationStart = timestamp;
+        const timelineProgress = Math.min(1, (timestamp - animationStart) / duration);
+        const movementProgress = Math.min(1, timelineProgress / movementEnd);
+        const easedProgress = 1 - Math.pow(1 - movementProgress, 3);
+
+        entries.forEach(({ element, start, end }) => {
+          element.style.top = `${start.top + (end.top - start.top) * easedProgress}px`;
+          element.style.height = `${start.height + (end.height - start.height) * easedProgress}px`;
+        });
+
+        if (timelineProgress < 1) requestAnimationFrame(renderFrame);
+        else resolve();
+      }
+
+      requestAnimationFrame(renderFrame);
     });
   }
 
@@ -208,6 +234,41 @@
         });
         reentryTop += end.height + gutter;
       });
+    }
+
+    if (safariFrameFallback) {
+      const frameEntries = panels.map(panel => {
+        const measuredStart = startSlots.get(panel);
+        const measuredEnd = endSlots.get(panel);
+
+        if (wrappedSet.has(panel) && direction === 'forward') {
+          return { element: panel, start: measuredStart, end: exitSlots.get(panel) };
+        }
+        if (wrappedSet.has(panel) && direction === 'backward') {
+          return {
+            element: panel,
+            start: { top: -measuredStart.height - gutter, height: measuredStart.height },
+            end: measuredEnd
+          };
+        }
+        return { element: panel, start: measuredStart, end: measuredEnd };
+      });
+
+      reentryClones.forEach(({ clone, start, end }) => {
+        clone.style.top = `${start.top}px`;
+        clone.style.height = `${start.height}px`;
+        frameEntries.push({ element: clone, start, end });
+      });
+
+      await runFrameAnimation(frameEntries, duration, movementEnd);
+      queue = nextQueue;
+      queue.forEach(panel => track.append(panel));
+      applyGeometry(null);
+      syncQueue();
+      reentryClones.forEach(({ clone }) => clone.remove());
+      track.classList.remove('is-queueing');
+      isAnimating = false;
+      return;
     }
 
     const animations = panels.map(panel => {
