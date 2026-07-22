@@ -17,9 +17,8 @@
   const nextButton = carousel.querySelector('[data-carousel-next]');
   const status = carousel.querySelector('[data-carousel-status]');
   const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
-  const safariFrameFallback = /Apple Computer/.test(navigator.vendor)
-    && /Safari/.test(navigator.userAgent)
-    && !/(CriOS|FxiOS|EdgiOS|OPiOS)/.test(navigator.userAgent);
+  const safariTransformFallback = /Safari/.test(navigator.userAgent)
+    && !/(Chrome|Chromium|CriOS|FxiOS|EdgiOS|OPiOS)/.test(navigator.userAgent);
   const visibleCount = Math.min(6, panels.length);
   const gutter = 6;
   const tailHeights = [52, 30, 20, 14, 10];
@@ -28,6 +27,7 @@
   let previewedPanel = null;
   let gestureStartY;
   let suppressClick = false;
+  let transformTransitionSequence = 0;
 
   function getGeometry(order, previewPanel = null) {
     const trackHeight = track.clientHeight;
@@ -94,42 +94,47 @@
     });
   }
 
-  function runFrameAnimation(entries, duration, movementEnd) {
+  function runTransformTransition(entries, duration) {
     return new Promise(resolve => {
-      let animationStart;
+      const transitionSequence = ++transformTransitionSequence;
+      let settled = false;
+      const finish = () => {
+        if (settled) return;
+        settled = true;
+        if (transitionSequence === transformTransitionSequence) {
+          entries.forEach(({ element }) => {
+            element.style.transition = '';
+            element.style.transform = '';
+            element.style.transformOrigin = '';
+            element.style.willChange = '';
+          });
+        }
+        resolve();
+      };
 
-      entries.forEach(({ element, end }) => {
+      entries.forEach(({ element, start, end }) => {
         element.style.top = `${end.top}px`;
         element.style.height = `${end.height}px`;
         element.style.transformOrigin = 'center top';
         element.style.willChange = 'transform';
+        element.style.transition = 'none';
+        element.style.transform = `translate3d(0, ${start.top - end.top}px, 0) scaleY(${start.height / Math.max(end.height, 1)})`;
       });
 
-      function renderFrame(timestamp) {
-        if (animationStart === undefined) animationStart = timestamp;
-        const timelineProgress = Math.min(1, (timestamp - animationStart) / duration);
-        const movementProgress = Math.min(1, timelineProgress / movementEnd);
-        const easedProgress = 1 - Math.pow(1 - movementProgress, 3);
-
-        entries.forEach(({ element, start, end }) => {
-          const currentTop = start.top + (end.top - start.top) * easedProgress;
-          const currentHeight = start.height + (end.height - start.height) * easedProgress;
-          const translateY = currentTop - end.top;
-          const scaleY = currentHeight / Math.max(end.height, 1);
-          element.style.transform = `translate3d(0, ${translateY}px, 0) scaleY(${scaleY})`;
-        });
-
-        if (timelineProgress < 1) requestAnimationFrame(renderFrame);
-        else {
-          entries.forEach(({ element }) => {
-            element.style.transform = 'none';
-            element.style.willChange = '';
-          });
-          resolve();
+      // Commit the inverse state before asking WebKit to composite toward the
+      // final state. Two frames avoid Safari coalescing both assignments.
+      track.getBoundingClientRect();
+      requestAnimationFrame(() => requestAnimationFrame(() => {
+        if (transitionSequence !== transformTransitionSequence) {
+          finish();
+          return;
         }
-      }
-
-      requestAnimationFrame(renderFrame);
+        entries.forEach(({ element }) => {
+          element.style.transition = `transform ${duration}ms cubic-bezier(.2, .72, .2, 1)`;
+          element.style.transform = 'translate3d(0, 0, 0) scaleY(1)';
+        });
+        window.setTimeout(finish, duration + 100);
+      }));
     });
   }
 
@@ -163,7 +168,10 @@
   function clearPreview({ update = true } = {}) {
     previewedPanel = null;
     panels.forEach(panel => panel.classList.remove('is-previewed', 'is-preview-neighbor'));
-    if (update && !isAnimating) applyGeometry(null);
+    if (update && !isAnimating) {
+      if (safariTransformFallback) transitionToGeometry(null, 300);
+      else applyGeometry(null);
+    }
   }
 
   function previewPanel(panel) {
@@ -175,7 +183,8 @@
     const position = queue.indexOf(panel);
     queue[position - 1]?.classList.add('is-preview-neighbor');
     if (position + 1 < visibleCount) queue[position + 1]?.classList.add('is-preview-neighbor');
-    applyGeometry(panel);
+    if (safariTransformFallback) transitionToGeometry(panel, 300);
+    else applyGeometry(panel);
   }
 
   function currentSlots() {
@@ -187,6 +196,17 @@
         height: bounds.height
       }];
     }));
+  }
+
+  function transitionToGeometry(previewPanel, duration) {
+    const startSlots = currentSlots();
+    const endSlots = getGeometry(queue, previewPanel);
+    const entries = panels.map(panel => ({
+      element: panel,
+      start: startSlots.get(panel),
+      end: endSlots.get(panel)
+    }));
+    runTransformTransition(entries, duration);
   }
 
   async function animateQueue(nextQueue, wrappedPanels, direction) {
@@ -252,7 +272,7 @@
       });
     }
 
-    if (safariFrameFallback) {
+    if (safariTransformFallback) {
       const frameEntries = panels.map(panel => {
         const measuredStart = startSlots.get(panel);
         const measuredEnd = endSlots.get(panel);
@@ -276,7 +296,7 @@
         frameEntries.push({ element: clone, start, end });
       });
 
-      await runFrameAnimation(frameEntries, duration, movementEnd);
+      await runTransformTransition(frameEntries, duration);
       wrappedPanels.forEach(panel => { panel.style.visibility = 'hidden'; });
       queue = nextQueue;
       queue.forEach(panel => track.append(panel));

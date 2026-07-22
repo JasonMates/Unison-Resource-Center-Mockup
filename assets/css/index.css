@@ -618,7 +618,6 @@ section[id] { scroll-margin-top: 92px; }
   background: #e9ebee;
   cursor: pointer;
   transform-origin: center;
-  will-change: top, height, transform;
   transition:
     top .72s cubic-bezier(.2, .72, .2, 1),
     height .72s cubic-bezier(.2, .72, .2, 1),
@@ -626,6 +625,7 @@ section[id] { scroll-margin-top: 92px; }
 }
 .about-carousel-track.is-queueing .about-carousel-panel {
   pointer-events: none;
+  filter: none;
   transition: filter .25s ease;
 }
 .about-carousel-panel:hover { filter: brightness(1.06); }
